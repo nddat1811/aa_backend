@@ -7,6 +7,7 @@ SET foreign_key_checks = 0;
 SET sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 DROP TABLE IF EXISTS `product`;
+
 CREATE TABLE `product` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
@@ -22,8 +23,8 @@ CREATE TABLE `product` (
   `boxsize` FLOAT,
   `warranty` VARCHAR(255),
   `description` VARCHAR(255),
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` BOOLEAN,
   `tag` VARCHAR(255) NOT NULL,
   `origin` INT,
@@ -31,17 +32,18 @@ CREATE TABLE `product` (
   `review_id` INT,
   `inventory_id` INT,
   `discount_id` INT,
-  `price_id` INT,
+  `price_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 DROP TABLE IF EXISTS `product_category`;
 CREATE TABLE `product_category` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
-  `deleted_at` BOOLEAN
+  `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` BOOLEAN NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- vì có nhiều giá cho từng m^2
@@ -56,8 +58,8 @@ DROP TABLE IF EXISTS `product_inventory`;
 CREATE TABLE `product_inventory` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `quantity` INT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
+  `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -68,8 +70,8 @@ CREATE TABLE `product_discount` (
   `description` VARCHAR(255),
   `active` BOOLEAN,
   `discount_percent` FLOAT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
+  `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -80,9 +82,9 @@ CREATE TABLE `product_review` (
   `parent_review` INT,
   `content` VARCHAR(255),
   `like` INT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
-  `deleted_at` BOOLEAN,
+  `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `deleted_at` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

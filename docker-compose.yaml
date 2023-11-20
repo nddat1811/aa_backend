@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   db:
-    image: mysql:5.7.4
+    image: mysql:5.7.34
     command: --init-file /var/lib/docker/volumes/db/init.sql --innodb-use-native-aio=0 --explicit_defaults_for_timestamp=false
     volumes:
       - ./db:/var/lib/docker/volumes/db
@@ -24,13 +24,13 @@ services:
     depends_on:
       - db
 
-  golang:
-    image: golang:1.18
-    ports:
-      - 4000:4000
-    volumes:
-      - .:/go/src/mvc_golang
-    working_dir: /go/src/mvc_golang
-    command: bash -c "export GO111MODULE=on && go mod tidy && go mod vendor && go install github.com/swaggo/swag/cmd/swag@latest && go install github.com/mitranim/gow@latest && swag init && gow run ."
-    depends_on:
-      - db
+  # golang:
+  #   image: golang:1.18
+  #   ports:
+  #     - 4000:4000
+  #   volumes:
+  #     - .:/go/src/mvc_golang
+  #   working_dir: /go/src/mvc_golang
+  #   command: bash -c "export GO111MODULE=on && go mod tidy && go mod vendor && go install github.com/swaggo/swag/cmd/swag@latest && go install github.com/mitranim/gow@latest && swag init && gow run ."
+  #   depends_on:
+  #     - db
