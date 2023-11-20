@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:5.7.4
+    command: --init-file /var/lib/docker/volumes/db/init.sql --innodb-use-native-aio=0 --explicit_defaults_for_timestamp=false
+    volumes:
+      - ./db:/var/lib/docker/volumes/db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - 3306:3306
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on:
+      - db
+
+  golang:
+    image: golang:1.18
+    ports:
+      - 4000:4000
+    volumes:
+      - .:/go/src/mvc_golang
+    working_dir: /go/src/mvc_golang
+    command: bash -c "export GO111MODULE=on && go mod tidy && go mod vendor && go install github.com/swaggo/swag/cmd/swag@latest && go install github.com/mitranim/gow@latest && swag init && gow run ."
+    depends_on:
+      - db
