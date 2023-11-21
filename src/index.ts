@@ -4,10 +4,12 @@ import express, { Application } from "express";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 
-import Router from "../routes";
-import dbConfig from "../config/database";
+import Router from "./routes";
+// import dbConfig from "./config/database";
 
 const PORT = process.env.PORT || 8000;
+
+import dbConfig from "./config/database";
 
 const app: Application = express();
 
@@ -26,6 +28,7 @@ app.use(
 );
 
 app.use(Router);
+
 
 createConnection(dbConfig)
   .then(() => {

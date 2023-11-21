@@ -1,15 +1,16 @@
-// import {ConnectionOptions} from 'typeorm'
-// import {User, Post, Comment} from '../models'
+// file ./config/database.ts
+import { ConnectionOptions } from "typeorm";
+import { ProductCategory } from "../models";
 
-// const config : ConnectionOptions = {
-//   type: "postgres",
-//   host: process.env.POSTGRES_HOST || "localhost",
-//   port: Number(process.env.POSTGRES_PORT) || 5432,
-//   username: process.env.POSTGRES_USER || "postgres",
-//   password: process.env.POSTGRES_PASSWORD || "postgres",
-//   database: process.env.POSTGRES_DB || "postgres",
-//   entities: [User, Post, Comment],
-//   synchronize: true,
-// }
+const dbConfig: ConnectionOptions = {
+  type: "mysql",
+  host: "db",
+  port: 3306,
+  username: "test",
+  password: "test",
+  database: "test",
+  entities: [ProductCategory],
+  synchronize: true,
+};
 
-// export default config
+export default dbConfig;
