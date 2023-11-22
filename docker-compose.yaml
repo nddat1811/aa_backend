@@ -1,40 +1,42 @@
-version: '3.8'
+version: "3"
 
 services:
-  # db:
-  #   image: mysql:5.7.44
-  #   command: --init-file /var/lib/docker/volumes/db/init.sql --innodb-use-native-aio=0 --explicit_defaults_for_timestamp=false
-  #   volumes:
-  #     - ./db:/var/lib/docker/volumes/db
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: test
-  #     MYSQL_DATABASE: test
-  #     MYSQL_USER: test
-  #     MYSQL_PASSWORD: test
-  #     MYSQL_ROOT_HOST: '%'
-  #   ports:
-  #     - 3306:3306
-
-  # adminer:
-  #   image: adminer
-  #   restart: always
-  #   ports:
-  #     - 8081:8080
-  #   depends_on:
-  #     - db
-
-  node_app:
-    container_name: my_node
-    image: node:18.18.0-alpine
-    restart: always
-    working_dir: /home/node/mvc_node_express
+  db:
+    image: mysql:5.7.34
+    command: --init-file /var/lib/docker/volumes/db/init.sql --innodb-use-native-aio=0 --explicit_defaults_for_timestamp=false
     volumes:
-      - ./:/home/node/mvc_node_express
-    command: sh -c "npm install -g nodemon && npm install && npm run dev"
+      - ./db:/var/lib/docker/volumes/db
+    restart: always
     environment:
-      - NODE_ENV=production
+      MYSQL_ROOT_PASSWORD: test
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_HOST: '%'
     ports:
-      - "3000:3000"
-    # depends_on:
-    #   - db
+      - 3306:3306
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 3
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on:
+      - db
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./src:/app/src
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      # db:
+      #   condition: service_healthy

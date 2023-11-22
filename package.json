@@ -4,25 +4,42 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon -r dotenv/config src/index.js",
+    "build": "tsc",
+    "dev": "nodemon src/index.ts",
+    "start": "nodemon src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "github.com/nddat1811/aa_backend"
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
+    "ext": "ts",
+    "exec": "ts-node src/index.ts"
   },
-  "keywords": [
-    "backend",
-    "nodejs"
-  ],
-  "author": "Adam",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2"
-  },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "@types/express": "^4.17.21",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^20.9.3",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.6",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "express-openapi-validator": "^5.1.1",
+    "morgan": "^1.10.0",
+    "mysql": "^2.18.1",
+    "openapi-typescript": "^6.7.1",
+    "reflect-metadata": "^0.1.13",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
+    "tsoa": "^5.1.1",
+    "typeorm": "^0.3.17"
   }
 }
