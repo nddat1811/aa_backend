@@ -4,7 +4,7 @@ import { ProductCategory } from "../models";
 
 const dbConfig: ConnectionOptions = {
   type: "mysql",
-  host: "db",
+  host: "localhost", //npm run dev thi localhost, docker thì db
   port: 3306,
   username: "test",
   password: "test",
