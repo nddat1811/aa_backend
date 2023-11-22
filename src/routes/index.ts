@@ -4,6 +4,15 @@ import ProductCategoryRouter from "./product_category.router";
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /ping:
+ *   get:
+ *     summary: Get all product categories
+ *     responses:
+ *       '200':
+ *         description:  App is up and running
+ */
 router.get("/ping", async (_req, res) => {
   const controller = new PingController();
   const response = await controller.getMessage();
