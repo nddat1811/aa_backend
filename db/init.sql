@@ -184,3 +184,108 @@ ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
 
 ALTER TABLE `address`
 ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+
+
+INSERT INTO `product` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`, `deleted_at`)
+VALUES
+('VONGTAY001', 'Vòng tay đá xanh', 'image1.jpg', 'Vietnam', 'Đá', 'Free size', '6 months', 'Vòng tay đá xanh dành cho mọi lứa tuổi.', 25.99, 1, 1, NULL, 0),
+('VONGTAY002', 'Vòng tay ngọc trai', 'image2.jpg', 'Vietnam', 'Ngọc trai', 'Free size', '1 year', 'Vòng tay ngọc trai cao cấp, sang trọng.', 35.99, 1, 2, 1, 0),
+('VONGTAY003', 'Vòng tay hạt gỗ', 'image3.jpg', 'Vietnam', 'Gỗ tự nhiên', 'Free size', '3 months', 'Vòng tay hạt gỗ tự nhiên, phong cách boho.', 19.99, 1, 3, NULL, 0),
+('NHAN001', 'Nhẫn bạc nữ', 'image4.jpg', 'Italy', 'Bạc', 'Size 6', '2 years', 'Nhẫn bạc nữ kiểu dáng đơn giản, tinh tế.', 29.99, 2, 4, NULL, 0),
+('NHAN002', 'Nhẫn bạc nam', 'image5.jpg', 'Italy', 'Bạc', 'Size 9', '1 year', 'Nhẫn bạc nam phong cách lịch lãm, mạnh mẽ.', 39.99, 2, 5, 2, 0),
+('NHAN003', 'Nhẫn vàng trắng', 'image6.jpg', 'USA', 'Vàng trắng 18K', 'Size 7', '5 years', 'Nhẫn vàng trắng 18K với thiết kế độc đáo.', 79.99, 2, 6, NULL, 0),
+('DAYCHUYEN001', 'Dây chuyền vàng hồng', 'image7.jpg', 'France', 'Vàng hồng 14K', '45cm', '1 year', 'Dây chuyền vàng hồng 14K đẳng cấp.', 149.99, 3, 7, NULL, 0),
+('DAYCHUYEN002', 'Dây chuyền ngọc trai', 'image8.jpg', 'Japan', 'Ngọc trai', '50cm', '3 months', 'Dây chuyền ngọc trai đẹp và quý phái.', 89.99, 3, 8, NULL, 0),
+('DAYCHUYEN003', 'Dây chuyền kim cương', 'image9.jpg', 'USA', 'Kim cương', '40cm', 'Lifetime', 'Dây chuyền kim cương cao cấp, bền vững.', 499.99, 3, 9, NULL, 0),
+('LACCHAN001', 'Lắc chân ngọc trai', 'image10.jpg', 'Vietnam', 'Ngọc trai', 'Adjustable', '2 years', 'Lắc chân ngọc trai phong cách và sang trọng.', 45.99, 4, 10, NULL, 0),
+('LACCHAN002', 'Lắc chân vàng 18K', 'image11.jpg', 'Italy', 'Vàng 18K', 'Adjustable', '5 years', 'Lắc chân vàng 18K đẳng cấp và tinh tế.', 89.99, 4, 11, NULL, 0),
+('LACCHAN003', 'Lắc chân bạc nữ', 'image12.jpg', 'Italy', 'Bạc', 'Adjustable', '1 year', 'Lắc chân bạc nữ đơn giản nhưng cuốn hút.', 30, 4, 12, 2, 0);
+
+
+INSERT INTO `product_category` (`code`, `name`)
+VALUES
+('VONGTAY', 'Vòng tay'),
+('NHAN', 'Nhẫn'),
+('DAYCHUYEN', 'Dây chuyền'),
+('LACCHAN', 'Lắc chân');
+
+INSERT INTO `product_inventory` (`quantity`)
+VALUES
+(1),
+(15),
+(20),
+(8),
+(12),
+(90),
+(75),
+(11),
+(5),
+(7),
+(18),
+(95);
+
+INSERT INTO `product_discount` (`name`, `description`, `active`, `discount_percent`, `deleted_at`)
+VALUES
+('Summer Sale', 'Giảm giá mùa hè', 1, 10, NULL),
+('Flash Sale', 'Khuyến mãi flash', 1, 15, NULL);
+
+INSERT INTO `product_review` (`product_id`, `user_id`, `parent_review`, `content`, `like`, `deleted_at`)
+VALUES
+(1, 1, NULL, 'Sản phẩm rất đẹp và chất lượng tốt.', 15, NULL),
+(2, 2, NULL, 'Tôi rất hài lòng với sản phẩm này.', 10, NULL);
+
+INSERT INTO `user` (`id`, `role_id`, `name`, `password`, `phone`, `email`, `address`, `dob`, `last_login`)
+VALUES
+(1, 1, 'Adam', '123', '0779455498', 'nddat1811@example.com', '123 Main St, Anytown, USA', '1990-05-15', '2023-11-20 08:30:00'),
+(2, 0, 'Đạt', '123', '0822000369', 'test', '456 Oak Ave, Sometown, USA', '1988-09-22', '2023-11-21 09:45:00'),
+(3, 0, 'Tô An', 'test', '555123456', 'alice@example.com', '789 Elm St, Anycity, USA', '1995-12-10', '2023-11-21 14:20:00'),
+(4, 0, 'Bob Brown', 'secretword', '111222333', 'bob@example.com', '321 Cedar St, Somecity, USA', '1992-07-03', '2023-11-22 10:15:00'),
+(5, 0, 'Eva Garcia', 'eva123', '999888777', 'eva@example.com', '654 Pine St, Othercity, USA', '1985-03-28', '2023-11-22 12:30:00'),
+(6, 0, 'David Lee', 'davidpass', '333444555', 'david@example.com', '987 Birch St, Anothercity, USA', '1998-10-17', '2023-11-23 11:00:00');
+
+INSERT INTO `address` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
+VALUES
+(1, 1, '135 Trần Hưng Đạo Name', 'HCM City', '12345', 1),
+(2, 2, '117 Trần Hưng Đạo', 'Quảng Trị', '67890', 1),
+(3, 3, '111 HCM', 'HCM', '13579', 1),
+(4, 4, '012 Street Name', 'City D', '24680', 1),
+(5, 5, '345 Street Name', 'City E', '98765', 1),
+(6, 6, '678 Street Name', 'City F', '54321', 1);
+
+
+INSERT INTO `user_payment` (`id`, `user_id`, `payment_type`, `provider`, `account_no`, `expiry`, `is_default`)
+VALUES
+(1, 1, 'Credit Card', 'Visa', 1234567890123456, '2024-12-01', 1),
+(2, 1, 'PayPal', 'PayPal', 9876543210, '2023-11-30', 0),
+(3, 2, 'Credit Card', 'Visa', 222222222, '2024-11-01', 0),
+(4, 2, 'PayPal', 'PayPal', 119876543210, '2023-11-30', 1);
+
+INSERT INTO `transaction` (`id`, `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
+VALUES
+(1, 1, 1, 1, 1, 1, 'Successful transaction', '2023-11-15 10:00:00', '2023-11-15 10:00:00'),
+(2, 2, 2, 2, 2, 1, 'Transaction pending', '2023-11-16 12:00:00', '2023-11-16 12:00:00'),
+(3, 3, 3, 1, 1, 0, 'Failed transaction', '2023-11-17 15:00:00', '2023-11-17 15:00:00');
+
+
+INSERT INTO `cart` (`id`, `user_id`)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3);
+
+INSERT INTO `cart_items` (`id`, `product_id`, `cart_id`, `quantity`, `price`)
+VALUES
+(1, 1, 1, 1, 25.99),
+(12, 12, 3, 2, 30);
+
+INSERT INTO `order_items` (`id`, `product_id`)
+VALUES
+(1, 1),
+(2, 12);
+
+
+INSERT INTO `order_details` (`id`, `session_id`, `order_id`, `user_id`, `total`)
+VALUES
+(1, 1, 1, 1, 103.94),
+(2, 2, 2, 2, 199.95),
+(3, 3, 3, 3, 679.94);
