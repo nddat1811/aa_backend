@@ -1,29 +1,41 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    Column,
-    CreateDateColumn,
-    UpdateDateColumn,
-    DeleteDateColumn,
-  } from 'typeorm';
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
+  OneToMany,
+} from "typeorm";
+import { Product } from "./product";
 
-  @Entity()
-  export class ProductCategory {
-    @PrimaryGeneratedColumn()
-    id!: number;
 
-    @Column({ type: 'varchar', length: 255, unique: true })
-    code!: string;
+@Entity()
+export class ProductCategory {
+  @PrimaryGeneratedColumn()
+  id!: number;
 
-    @Column({ type: 'varchar', length: 255 })
-    name!: string;
+  @Column()
+  code?: string;
 
-    @CreateDateColumn()
-    created_at!: Date;
+  @Column()
+  name?: string;
 
-    @UpdateDateColumn()
-    updated_at!: Date;
+  @CreateDateColumn({
+    name: "created_at",
+  })
+  createdAt?: Date;
 
-    @DeleteDateColumn()
-    deleted_at!: Date | null;
-  }
+  @UpdateDateColumn({
+    name: "updated_at",
+  })
+  updatedAt?: Date;
+
+  @DeleteDateColumn({
+    name: "deleted_at",
+  })
+  deletedAt?: Date | null;
+
+  @OneToMany(() => Product, (product) => product.id)
+  product?: Product[];
+}

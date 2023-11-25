@@ -19,6 +19,11 @@ router.get("/ping", async (_req, res) => {
   return res.send(response);
 });
 
+router.get("/", async (_req, res) => {
+  console.log("hi");
+  return res.send("<p>h2222i</p>");
+});
+
 router.use("/product_category", ProductCategoryRouter)
 
 export default router;

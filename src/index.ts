@@ -19,9 +19,9 @@ app.use(express.static("public"));
 app.use(Router);
 
 app.listen(PORT, async () => {
-  
-  console.log(`App is running at http://localhost:${PORT}`);
 
+  console.log(`App is running at http://localhost:${PORT}`);
+  
   await connectToDatabase();
   swaggerDocs(app, PORT);
 });

@@ -1,5 +1,6 @@
 import express from "express";
 import ProductCategoryController from "../controllers/product_category.controller";
+import returnResponse, { CODE_SUCCESS, ERROR_BAD_REQUEST } from "../helper/response";
 
 const router = express.Router();
 
@@ -15,7 +16,14 @@ const router = express.Router();
 router.get("/", async (_req, res) => {
   const controller = new ProductCategoryController();
   const response = await controller.getProductCategories();
-  return res.send(response);
+  if (!response) {
+    res.send(
+      returnResponse(ERROR_BAD_REQUEST, "Dữ liệu trả về thất bại", response)
+    );
+  }
+  res.send(
+    returnResponse(CODE_SUCCESS, "Dữ liệu trả về thành công", response)
+  );
 });
 
 /**
@@ -37,8 +45,8 @@ router.get("/", async (_req, res) => {
  */
 router.get("/get/:id", async (req, res) => {
   const controller = new ProductCategoryController();
-  const response = "await controller.getComment(req.params.id);"
-  if (!response) res.status(404).send({message: "No comment found"})
+  const response = "await controller.getComment(req.params.id);";
+  if (!response) res.status(404).send({ message: "No comment found" });
   return res.send(response);
 });
 
