@@ -2,7 +2,7 @@ CREATE DATABASE IF NOT EXISTS test;
 
 USE test;
 SET NAMES utf8;
-SET time_zone = '+00:00';
+SET time_zone = '+08:00';
 SET foreign_key_checks = 0;
 SET sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
@@ -282,9 +282,3 @@ VALUES
   (1, 1, 1, 1, 1, 'Transaction 1 content'),
   (2, 2, 2, 2, 2, 'Transaction 2 content'),
   (3, 3, 3, 3, 3, 'Transaction 3 content');
--- INSERT INTO `transaction` (`id`, `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
--- VALUES
--- (1, 1, 1, 1, 1, 1, 'Successful transaction'),
--- (2, 2, 2, 2, 2, 1, 'Transaction pending'),
--- (3, 3, 3, 1, 1, 0, 'Failed transaction');
-
