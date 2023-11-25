@@ -29,7 +29,9 @@ export class User {
   @Column()
   password?: string;
 
-  @Column()
+  @Column({
+    name: "phone",
+  })
   phone?: string;
 
   @Column()
@@ -38,10 +40,12 @@ export class User {
   @Column()
   address?: string;
 
-  @Column()
+  @Column({
+    name: "dob",
+  })
   dob?: Date;
 
-  @Column({ name: "last_login" })
+  @CreateDateColumn({ name: "last_login"})
   lastLogin?: Date;
 
   @CreateDateColumn({ name: "created_at" })
@@ -50,21 +54,21 @@ export class User {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @OneToMany(() => UserPayment, (userPayment) => userPayment.user)
-  userPayment?: UserPayment[];
+  @OneToMany(() => UserPayment, (userPayments) => userPayments.user)
+  userPayments?: UserPayment[];
 
-  @OneToMany(() => Address, (userAddress) => userAddress.user)
-  userAddress?: Address[];
+  @OneToMany(() => Address, (userAddresses) => userAddresses.user)
+  userAddresses?: Address[];
 
-  @OneToMany(() => Cart, (userCart) => userCart.user)
-  userCart?: Cart[];
+  @OneToMany(() => Cart, (userCarts) => userCarts.user)
+  userCarts?: Cart[];
 
-  @OneToMany(() => ProductReview, (productReview) => productReview.user)
-  productReview?: ProductReview[];
+  @OneToMany(() => ProductReview, (productReviews) => productReviews.user)
+  productReviews?: ProductReview[];
 
-  @OneToMany(() => Transaction, (userTransaction) => userTransaction.user)
-  userTransaction?: Transaction[];
+  @OneToMany(() => Transaction, (userTransactions) => userTransactions.user)
+  userTransactions?: Transaction[];
 
-  @OneToMany(() => OrderDetail, (userOder) => userOder.user)
-  userOder?: OrderDetail[];
+  @OneToMany(() => OrderDetail, (userOders) => userOders.user)
+  userOders?: OrderDetail[];
 }

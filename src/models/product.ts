@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
   ManyToOne,
   JoinColumn,
   OneToOne,
@@ -56,29 +55,33 @@ export class Product {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @Column({ name: "deleted_at" })
-  deletedAt?: boolean;
+  @Column({
+    name: "deleted_at",
+    type: "boolean", // Use a supported data type (e.g., boolean)
+    nullable: true, // Ensure it allows null values if needed
+  })
+  deletedAt?: boolean | null;
 
-  @ManyToOne(() => ProductCategory, (category) => category.id)
+  @ManyToOne(() => ProductCategory, (category) => category.products)
   @JoinColumn({
     name: "category_id",
     referencedColumnName: "id",
   })
   category?: ProductCategory;
 
-  @OneToOne(() => ProductInventory, (inventory) => inventory.id)
+  @OneToOne(() => ProductInventory)
   @JoinColumn({
     name: "inventory_id",
     referencedColumnName: "id",
   })
   invertory?: ProductInventory;
 
-  @OneToMany(() => ProductReview, (productReview) => productReview.product)
-  productReview?: ProductReview[];
+  @OneToMany(() => ProductReview, (productReviews) => productReviews.product)
+  productReviews?: ProductReview[];
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.product)
-  cartItem?: CartItem[];
+  @OneToMany(() => CartItem, (cartItems) => cartItems.product)
+  cartItems?: CartItem[];
 
-  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
-  orderItem?: OrderItem[];
+  @OneToMany(() => OrderItem, (orderItems) => orderItems.product)
+  orderItems?: OrderItem[];
 }

@@ -24,7 +24,7 @@ export class Address {
   @Column({ name: "is_default" })
   isDefault?: boolean;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.userAddresses)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",

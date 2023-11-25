@@ -27,7 +27,7 @@ export class UserPayment {
   @Column({ name: "is_default" })
   isDefault?: boolean;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.userPayments)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",

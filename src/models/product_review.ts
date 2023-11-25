@@ -28,10 +28,14 @@ export class ProductReview {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @Column({ name: "deleted_at" })
-  deletedAt?: boolean;
+  @Column({
+    name: "deleted_at",
+    type: "boolean", // Use a supported data type (e.g., boolean)
+    nullable: true, // Ensure it allows null values if needed
+  })
+  deletedAt?: boolean | null;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.productReviews)
   @JoinColumn({
     name: "product_id",
     referencedColumnName: "id",
@@ -42,7 +46,7 @@ export class ProductReview {
   @JoinColumn({ name: "parent_review_id", referencedColumnName: "id" })
   parentReview?: ProductReview;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.productReviews)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",

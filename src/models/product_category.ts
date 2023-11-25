@@ -4,7 +4,6 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  DeleteDateColumn,
   OneToMany,
 } from "typeorm";
 import { Product } from "./product";
@@ -31,11 +30,13 @@ export class ProductCategory {
   })
   updatedAt?: Date;
 
-  @DeleteDateColumn({
+  @Column({
     name: "deleted_at",
+    type: "boolean", // Use a supported data type (e.g., boolean)
+    nullable: true, // Ensure it allows null values if needed
   })
-  deletedAt?: Date | null;
+  deletedAt?: boolean | null;
 
-  @OneToMany(() => Product, (product) => product.id)
-  product?: Product[];
+  @OneToMany(() => Product, (product) => product.category)
+  products?: Product[];
 }

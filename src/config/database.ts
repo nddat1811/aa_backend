@@ -1,5 +1,19 @@
 import { createConnection, ConnectionOptions, Connection } from "typeorm";
-import { ProductCategory } from "../models";
+import {
+  ProductCategory,
+  Cart,
+  Address,
+  CartItem,
+  User,
+  UserPayment,
+  Transaction,
+  ProductReview,
+  Product,
+  ProductDiscount,
+  ProductInventory,
+  OrderDetail,
+  OrderItem,
+} from "../models";
 
 export class DatabaseSingleton {
   private static instance: Connection | null = null;
@@ -10,12 +24,26 @@ export class DatabaseSingleton {
     if (!DatabaseSingleton.instance) {
       const dbConfig: ConnectionOptions = {
         type: "mysql",
-        host: "db", //npm run dev thi localhost, docker thì db
+        host: "localhost", //npm run dev thi localhost, docker thì db
         port: 3306,
         username: "test",
         password: "test",
         database: "test",
-        entities: [ProductCategory],
+        entities: [
+          ProductCategory,
+          Cart,
+          Address,
+          CartItem,
+          User,
+          UserPayment,
+          Transaction,
+          ProductReview,
+          Product,
+          ProductDiscount,
+          ProductInventory,
+          OrderDetail,
+          OrderItem,
+        ],
         synchronize: true,
       };
 

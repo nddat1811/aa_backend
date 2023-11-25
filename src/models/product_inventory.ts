@@ -20,6 +20,10 @@ export class ProductInventory {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @Column({ name: "deleted_at" })
-  deletedAt?: boolean;
+  @Column({
+    name: "deleted_at",
+    type: "boolean", // Use a supported data type (e.g., boolean)
+    nullable: true, // Ensure it allows null values if needed
+  })
+  deletedAt?: boolean | null;
 }

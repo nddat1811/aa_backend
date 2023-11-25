@@ -21,13 +21,13 @@ export class OrderItem {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.orderItems)
   @JoinColumn({
     name: "product_id",
     referencedColumnName: "id",
   })
   product?: Product;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
-  orderDetail?: OrderDetail[];
+  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
+  orderDetails?: OrderDetail[];
 }

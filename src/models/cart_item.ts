@@ -24,14 +24,14 @@ export class CartItem {
   @Column({ name: "updated_at" })
   updatedAt?: Date;
 
-  @ManyToOne(() => Product, (product) => product.id)
+  @ManyToOne(() => Product, (product) => product.cartItems)
   @JoinColumn({
     name: "product_id",
     referencedColumnName: "id",
   })
   product?: Product;
 
-  @ManyToOne(() => Cart, (cart) => cart.id)
+  @ManyToOne(() => Cart, (cart) => cart.cartItems)
   @JoinColumn({
     name: "cart_id",
     referencedColumnName: "id",

@@ -25,20 +25,20 @@ export class OrderDetail {
   @Column({ name: "session_id" })
   sessionId!: number;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.userOders)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
   })
   user?: User;
 
-  @ManyToOne(() => OrderItem, (order) => order.id)
+  @ManyToOne(() => OrderItem, (order) => order.orderDetails)
   @JoinColumn({
     name: "order_id",
     referencedColumnName: "id",
   })
   order?: OrderItem;
 
-  @OneToMany(() => Transaction, (userTransaction) => userTransaction.order)
-  userTransaction?: Transaction[];
+  @OneToMany(() => Transaction, (userTransactions) => userTransactions.order)
+  userTransactions?: Transaction[];
 }

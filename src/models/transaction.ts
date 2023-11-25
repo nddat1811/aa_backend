@@ -4,6 +4,8 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { User, OrderDetail } from "./index";
 
@@ -24,20 +26,20 @@ export class Transaction {
   @Column({ type: "text" })
   content?: string;
 
-  @Column({ name: "created_at" })
+  @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 
-  @Column({ name: "updated_at" })
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.userTransactions)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
   })
   user?: User;
 
-  @ManyToOne(() => OrderDetail, (order) => order.id)
+  @ManyToOne(() => OrderDetail, (order) => order.userTransactions)
   @JoinColumn({
     name: "order_detail_id",
     referencedColumnName: "id",

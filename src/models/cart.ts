@@ -13,13 +13,13 @@ export class Cart {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.userCarts)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
   })
   user?: User;
 
-  @OneToMany(() => CartItem, (cartItem) => cartItem.cart)
-  cartItem?: CartItem[];
+  @OneToMany(() => CartItem, (cartItems) => cartItems.cart)
+  cartItems?: CartItem[];
 }

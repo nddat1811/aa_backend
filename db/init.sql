@@ -54,8 +54,7 @@ CREATE TABLE `product_discount` (
   `active` BOOLEAN,
   `discount_percent` FLOAT,
   `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` BOOLEAN
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `product_review`;
@@ -73,14 +72,14 @@ CREATE TABLE `product_review` (
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
-  `id` INT PRIMARY KEY,
-  `role_id` INT NOT NULL,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `role` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255),
   `password` VARCHAR(255),
-  `phone` VARCHAR(20),
+  `phone` VARCHAR(255),
   `email` VARCHAR(255),
   `address` VARCHAR(255),
-  `dob` DATE,
+  `dob` TIMESTAMP,
   `last_login` TIMESTAMP,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -88,18 +87,18 @@ CREATE TABLE `user` (
 
 DROP TABLE IF EXISTS `user_payment`;
 CREATE TABLE `user_payment` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `payment_type` VARCHAR(255),
   `provider` VARCHAR(255),
-  `account_no` INT,
+  `account_no` VARCHAR(255),
   `expiry` TIMESTAMP,
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `transaction`;
 CREATE TABLE `transaction` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `order_detail_id` INT,
   `type` SMALLINT NOT NULL,
@@ -112,13 +111,13 @@ CREATE TABLE `transaction` (
 
 DROP TABLE IF EXISTS `cart`;
 CREATE TABLE `cart` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `cart_items`;
 CREATE TABLE `cart_items` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `product_id` INT,
   `cart_id` INT,
   `quantity` INT,
@@ -129,8 +128,7 @@ CREATE TABLE `cart_items` (
 
 DROP TABLE IF EXISTS `order_details`;
 CREATE TABLE `order_details` (
-  `id` INT PRIMARY KEY,
-  `session_id` INT,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `order_id` INT,
   `user_id` INT,
   `total` INT,
@@ -140,7 +138,7 @@ CREATE TABLE `order_details` (
 
 DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `created_at` TIMESTAMP,
   `updated_at` TIMESTAMP,
   `product_id` INT
@@ -148,14 +146,13 @@ CREATE TABLE `order_items` (
 
 DROP TABLE IF EXISTS `address`;
 CREATE TABLE `address` (
-  `id` INT PRIMARY KEY,
+  `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `street` VARCHAR(255),
   `city` VARCHAR(255),
   `postal_code` VARCHAR(20),
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 ALTER TABLE `product`
 ADD FOREIGN KEY (`category_id`) REFERENCES `product_category`(`id`),
@@ -185,7 +182,6 @@ ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
 ALTER TABLE `address`
 ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
 
-
 INSERT INTO `product` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`, `deleted_at`)
 VALUES
 ('VONGTAY001', 'Vòng tay đá xanh', 'image1.jpg', 'Vietnam', 'Đá', 'Free size', '6 months', 'Vòng tay đá xanh dành cho mọi lứa tuổi.', 25.99, 1, 1, NULL, 0),
@@ -200,7 +196,6 @@ VALUES
 ('LACCHAN001', 'Lắc chân ngọc trai', 'image10.jpg', 'Vietnam', 'Ngọc trai', 'Adjustable', '2 years', 'Lắc chân ngọc trai phong cách và sang trọng.', 45.99, 4, 10, NULL, 0),
 ('LACCHAN002', 'Lắc chân vàng 18K', 'image11.jpg', 'Italy', 'Vàng 18K', 'Adjustable', '5 years', 'Lắc chân vàng 18K đẳng cấp và tinh tế.', 89.99, 4, 11, NULL, 0),
 ('LACCHAN003', 'Lắc chân bạc nữ', 'image12.jpg', 'Italy', 'Bạc', 'Adjustable', '1 year', 'Lắc chân bạc nữ đơn giản nhưng cuốn hút.', 30, 4, 12, 2, 0);
-
 
 INSERT INTO `product_category` (`code`, `name`)
 VALUES
@@ -224,24 +219,24 @@ VALUES
 (18),
 (95);
 
-INSERT INTO `product_discount` (`name`, `description`, `active`, `discount_percent`, `deleted_at`)
+INSERT INTO `product_discount` (`name`, `description`, `active`, `discount_percent`)
 VALUES
-('Summer Sale', 'Giảm giá mùa hè', 1, 10, NULL),
-('Flash Sale', 'Khuyến mãi flash', 1, 15, NULL);
+('Summer Sale', 'Giảm giá mùa hè', 1, 10),
+('Flash Sale', 'Khuyến mãi flash', 1, 15);
 
 INSERT INTO `product_review` (`product_id`, `user_id`, `parent_review`, `content`, `like`, `deleted_at`)
 VALUES
 (1, 1, NULL, 'Sản phẩm rất đẹp và chất lượng tốt.', 15, NULL),
 (2, 2, NULL, 'Tôi rất hài lòng với sản phẩm này.', 10, NULL);
 
-INSERT INTO `user` (`id`, `role_id`, `name`, `password`, `phone`, `email`, `address`, `dob`, `last_login`)
+INSERT INTO `user` (`id`, `role`, `name`, `password`, `phone`, `email`, `address`, `dob`, `last_login`)
 VALUES
-(1, 1, 'Adam', '123', '0779455498', 'nddat1811@example.com', '123 Main St, Anytown, USA', '1990-05-15', '2023-11-20 08:30:00'),
-(2, 0, 'Đạt', '123', '0822000369', 'test', '456 Oak Ave, Sometown, USA', '1988-09-22', '2023-11-21 09:45:00'),
-(3, 0, 'Tô An', 'test', '555123456', 'alice@example.com', '789 Elm St, Anycity, USA', '1995-12-10', '2023-11-21 14:20:00'),
-(4, 0, 'Bob Brown', 'secretword', '111222333', 'bob@example.com', '321 Cedar St, Somecity, USA', '1992-07-03', '2023-11-22 10:15:00'),
-(5, 0, 'Eva Garcia', 'eva123', '999888777', 'eva@example.com', '654 Pine St, Othercity, USA', '1985-03-28', '2023-11-22 12:30:00'),
-(6, 0, 'David Lee', 'davidpass', '333444555', 'david@example.com', '987 Birch St, Anothercity, USA', '1998-10-17', '2023-11-23 11:00:00');
+(1, "ADMIN", 'Adam', '123', '0779455498', 'nddat1811@example.com', '123 Main St, Anytown, USA', '1990-05-15  00:00:00', '2023-11-20 08:30:00'),
+(2, "USER", 'Đạt', '123', '0822000369', 'test', '456 Oak Ave, Sometown, USA', '1988-09-22 00:00:00', '2023-11-21 09:45:00'),
+(3, "USER", 'Tô An', 'test', '555123456', 'alice@example.com', '789 Elm St, Anycity, USA', '1995-12-10  00:00:00', '2023-11-21 14:20:00'),
+(4, "USER", 'Bob Brown', 'secretword', '111222333', 'bob@example.com', '321 Cedar St, Somecity, USA', '1992-07-03  00:00:00', '2023-11-22 10:15:00'),
+(5, "USER", 'Eva Garcia', 'eva123', '999888777', 'eva@example.com', '654 Pine St, Othercity, USA', '1985-03-28  00:00:00', '2023-11-22 12:30:00'),
+(6, "USER", 'David Lee', 'davidpass', '333444555', 'david@example.com', '987 Birch St, Anothercity, USA', '1998-10-17  00:00:00', '2023-11-23 11:00:00');
 
 INSERT INTO `address` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
 VALUES
@@ -252,20 +247,23 @@ VALUES
 (5, 5, '345 Street Name', 'City E', '98765', 1),
 (6, 6, '678 Street Name', 'City F', '54321', 1);
 
-
 INSERT INTO `user_payment` (`id`, `user_id`, `payment_type`, `provider`, `account_no`, `expiry`, `is_default`)
 VALUES
-(1, 1, 'Credit Card', 'Visa', 1234567890123456, '2024-12-01', 1),
-(2, 1, 'PayPal', 'PayPal', 9876543210, '2023-11-30', 0),
-(3, 2, 'Credit Card', 'Visa', 222222222, '2024-11-01', 0),
-(4, 2, 'PayPal', 'PayPal', 119876543210, '2023-11-30', 1);
+(1, 1, 'Credit Card', 'Visa', '12345', '2024-12-01', 1),
+(2, 1, 'PayPal', 'PayPal', '9876543210', '2023-11-30', 0),
+(3, 2, 'Credit Card', 'Visa', '222222222', '2024-11-01', 0),
+(4, 2, 'PayPal', 'PayPal', '119876543210', '2023-11-30', 1);
 
-INSERT INTO `transaction` (`id`, `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
+INSERT INTO `order_items` (`id`, `product_id`)
 VALUES
-(1, 1, 1, 1, 1, 1, 'Successful transaction', '2023-11-15 10:00:00', '2023-11-15 10:00:00'),
-(2, 2, 2, 2, 2, 1, 'Transaction pending', '2023-11-16 12:00:00', '2023-11-16 12:00:00'),
-(3, 3, 3, 1, 1, 0, 'Failed transaction', '2023-11-17 15:00:00', '2023-11-17 15:00:00');
+(1, 1),
+(2, 12);
 
+INSERT INTO `order_details` (`id`, `order_id`, `user_id`, `total`)
+VALUES
+(1, 1, 1, 103.94),
+(2, 2, 2, 199.95),
+(3, 3, 3, 679.94);
 
 INSERT INTO `cart` (`id`, `user_id`)
 VALUES
@@ -278,14 +276,15 @@ VALUES
 (1, 1, 1, 1, 25.99),
 (12, 12, 3, 2, 30);
 
-INSERT INTO `order_items` (`id`, `product_id`)
-VALUES
-(1, 1),
-(2, 12);
 
-
-INSERT INTO `order_details` (`id`, `session_id`, `order_id`, `user_id`, `total`)
+INSERT INTO `transaction` ( `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
 VALUES
-(1, 1, 1, 1, 103.94),
-(2, 2, 2, 2, 199.95),
-(3, 3, 3, 3, 679.94);
+  (1, 1, 1, 1, 1, 'Transaction 1 content'),
+  (2, 2, 2, 2, 2, 'Transaction 2 content'),
+  (3, 3, 3, 3, 3, 'Transaction 3 content');
+-- INSERT INTO `transaction` (`id`, `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
+-- VALUES
+-- (1, 1, 1, 1, 1, 1, 'Successful transaction'),
+-- (2, 2, 2, 2, 2, 1, 'Transaction pending'),
+-- (3, 3, 3, 1, 1, 0, 'Failed transaction');
+
