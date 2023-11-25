@@ -17,7 +17,7 @@ import {
   OrderItem,
 } from "./index";
 
-@Entity()
+@Entity({name: "products"})
 export class Product {
   @PrimaryGeneratedColumn()
   id: number | undefined;

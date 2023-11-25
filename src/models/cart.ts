@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { User, CartItem } from "./index";
 
-@Entity()
+@Entity({name: "carts"})
 export class Cart {
   @PrimaryGeneratedColumn()
   id!: number;

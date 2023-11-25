@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { User } from "./index";
 
-@Entity()
+@Entity({name:"addresses"})
 export class Address {
   @PrimaryGeneratedColumn()
   id!: number;

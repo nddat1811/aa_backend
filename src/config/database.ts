@@ -44,7 +44,7 @@ export class DatabaseSingleton {
           OrderDetail,
           OrderItem,
         ],
-        synchronize: true,
+        // synchronize: true, // dòng bug qq má m
       };
 
       try {

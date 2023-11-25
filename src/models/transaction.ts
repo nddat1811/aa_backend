@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { User, OrderDetail } from "./index";
 
-@Entity()
+@Entity({name: "transactions"})
 export class Transaction {
   @PrimaryGeneratedColumn()
   id!: number;

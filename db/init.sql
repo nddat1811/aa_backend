@@ -6,8 +6,8 @@ SET time_zone = '+08:00';
 SET foreign_key_checks = 0;
 SET sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
-DROP TABLE IF EXISTS `product`;
-CREATE TABLE `product` (
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE `products` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
@@ -20,15 +20,15 @@ CREATE TABLE `product` (
   `price` FLOAT,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` BOOLEAN,
+  `deleted_at` BOOLEAN NULL,
   `category_id` INT,
   `inventory_id` INT,
   `discount_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `product_category`;
-CREATE TABLE `product_category` (
+DROP TABLE IF EXISTS `product_discounts_categories`;
+CREATE TABLE `product_categories` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
   `name` VARCHAR(255) NOT NULL,
@@ -37,17 +37,17 @@ CREATE TABLE `product_category` (
   `deleted_at` BOOLEAN NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `product_inventory`;
-CREATE TABLE `product_inventory` (
+DROP TABLE IF EXISTS `product_inventories`;
+CREATE TABLE `product_inventories` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `quantity` INT,
   `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` BOOLEAN
+  `deleted_at` BOOLEAN NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `product_discount`;
-CREATE TABLE `product_discount` (
+DROP TABLE IF EXISTS `product_discounts`;
+CREATE TABLE `product_discounts` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `name` VARCHAR(255),
   `description` VARCHAR(255),
@@ -57,8 +57,8 @@ CREATE TABLE `product_discount` (
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `product_review`;
-CREATE TABLE `product_review` (
+DROP TABLE IF EXISTS `product_reviews`;
+CREATE TABLE `product_reviews` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `product_id` INT,
   `user_id` INT,
@@ -67,26 +67,26 @@ CREATE TABLE `product_review` (
   `like` INT,
   `created_at` timestamp NOT NULL  DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` BOOLEAN
+  `deleted_at` BOOLEAN NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `user`;
-CREATE TABLE `user` (
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `role` VARCHAR(255) NOT NULL,
-  `name` VARCHAR(255),
-  `password` VARCHAR(255),
-  `phone` VARCHAR(255),
-  `email` VARCHAR(255),
-  `address` VARCHAR(255),
-  `dob` TIMESTAMP,
+  `name` VARCHAR(255) NOT NULL,
+  `password` VARCHAR(255) NOT NULL,
+  `phone` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `address` VARCHAR(255) NOT NULL,
+  `dob` TIMESTAMP NOT NULL,
   `last_login` TIMESTAMP,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `user_payment`;
-CREATE TABLE `user_payment` (
+DROP TABLE IF EXISTS `user_payments`;
+CREATE TABLE `user_payments` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `payment_type` VARCHAR(255),
@@ -96,8 +96,8 @@ CREATE TABLE `user_payment` (
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `transaction`;
-CREATE TABLE `transaction` (
+DROP TABLE IF EXISTS `transactions`;
+CREATE TABLE `transactions` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `order_detail_id` INT,
@@ -109,8 +109,8 @@ CREATE TABLE `transaction` (
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `cart`;
-CREATE TABLE `cart` (
+DROP TABLE IF EXISTS `carts`;
+CREATE TABLE `carts` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -122,8 +122,8 @@ CREATE TABLE `cart_items` (
   `cart_id` INT,
   `quantity` INT,
   `price` FLOAT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `order_details`;
@@ -132,20 +132,20 @@ CREATE TABLE `order_details` (
   `order_id` INT,
   `user_id` INT,
   `total` INT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `created_at` TIMESTAMP,
-  `updated_at` TIMESTAMP,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `product_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `address`;
-CREATE TABLE `address` (
+DROP TABLE IF EXISTS `addresses`;
+CREATE TABLE `addresses` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `user_id` INT,
   `street` VARCHAR(255),
@@ -154,35 +154,35 @@ CREATE TABLE `address` (
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-ALTER TABLE `product`
-ADD FOREIGN KEY (`category_id`) REFERENCES `product_category`(`id`),
-ADD FOREIGN KEY (`inventory_id`) REFERENCES `product_inventory`(`id`),
-ADD FOREIGN KEY (`discount_id`) REFERENCES `product_discount`(`id`);
+ALTER TABLE `products`
+ADD FOREIGN KEY (`category_id`) REFERENCES `product_categories`(`id`),
+ADD FOREIGN KEY (`inventory_id`) REFERENCES `product_inventories`(`id`),
+ADD FOREIGN KEY (`discount_id`) REFERENCES `product_discounts`(`id`);
 
-ALTER TABLE `product_review`
-ADD FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
-ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
-ADD FOREIGN KEY (`parent_review`) REFERENCES `product_review`(`id`);
+ALTER TABLE `product_reviews`
+ADD FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+ADD FOREIGN KEY (`parent_review`) REFERENCES `product_reviews`(`id`);
 
-ALTER TABLE `user_payment`
-ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+ALTER TABLE `user_payments`
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `transaction`
-ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`),
+ALTER TABLE `transactions`
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
 ADD FOREIGN KEY (`order_detail_id`) REFERENCES `order_details`(`id`);
 
 ALTER TABLE `cart_items`
-ADD FOREIGN KEY (`product_id`) REFERENCES `product`(`id`),
-ADD FOREIGN KEY (`cart_id`) REFERENCES `cart`(`id`);
+ADD FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+ADD FOREIGN KEY (`cart_id`) REFERENCES `carts`(`id`);
 
 ALTER TABLE `order_details`
 ADD FOREIGN KEY (`order_id`) REFERENCES `order_items`(`id`),
-ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `address`
-ADD FOREIGN KEY (`user_id`) REFERENCES `user`(`id`);
+ALTER TABLE `addresses`
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-INSERT INTO `product` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`, `deleted_at`)
+INSERT INTO `products` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`, `deleted_at`)
 VALUES
 ('VONGTAY001', 'Vòng tay đá xanh', 'image1.jpg', 'Vietnam', 'Đá', 'Free size', '6 months', 'Vòng tay đá xanh dành cho mọi lứa tuổi.', 25.99, 1, 1, NULL, 0),
 ('VONGTAY002', 'Vòng tay ngọc trai', 'image2.jpg', 'Vietnam', 'Ngọc trai', 'Free size', '1 year', 'Vòng tay ngọc trai cao cấp, sang trọng.', 35.99, 1, 2, 1, 0),
@@ -197,14 +197,14 @@ VALUES
 ('LACCHAN002', 'Lắc chân vàng 18K', 'image11.jpg', 'Italy', 'Vàng 18K', 'Adjustable', '5 years', 'Lắc chân vàng 18K đẳng cấp và tinh tế.', 89.99, 4, 11, NULL, 0),
 ('LACCHAN003', 'Lắc chân bạc nữ', 'image12.jpg', 'Italy', 'Bạc', 'Adjustable', '1 year', 'Lắc chân bạc nữ đơn giản nhưng cuốn hút.', 30, 4, 12, 2, 0);
 
-INSERT INTO `product_category` (`code`, `name`)
+INSERT INTO `product_categories` (`code`, `name`)
 VALUES
 ('VONGTAY', 'Vòng tay'),
 ('NHAN', 'Nhẫn'),
 ('DAYCHUYEN', 'Dây chuyền'),
 ('LACCHAN', 'Lắc chân');
 
-INSERT INTO `product_inventory` (`quantity`)
+INSERT INTO `product_inventories` (`quantity`)
 VALUES
 (1),
 (15),
@@ -219,17 +219,17 @@ VALUES
 (18),
 (95);
 
-INSERT INTO `product_discount` (`name`, `description`, `active`, `discount_percent`)
+INSERT INTO `product_discounts` (`name`, `description`, `active`, `discount_percent`)
 VALUES
 ('Summer Sale', 'Giảm giá mùa hè', 1, 10),
 ('Flash Sale', 'Khuyến mãi flash', 1, 15);
 
-INSERT INTO `product_review` (`product_id`, `user_id`, `parent_review`, `content`, `like`, `deleted_at`)
+INSERT INTO `product_reviews` (`product_id`, `user_id`, `parent_review`, `content`, `like`, `deleted_at`)
 VALUES
 (1, 1, NULL, 'Sản phẩm rất đẹp và chất lượng tốt.', 15, NULL),
 (2, 2, NULL, 'Tôi rất hài lòng với sản phẩm này.', 10, NULL);
 
-INSERT INTO `user` (`id`, `role`, `name`, `password`, `phone`, `email`, `address`, `dob`, `last_login`)
+INSERT INTO `users` (`id`, `role`, `name`, `password`, `phone`, `email`, `address`, `dob`, `last_login`)
 VALUES
 (1, "ADMIN", 'Adam', '123', '0779455498', 'nddat1811@example.com', '123 Main St, Anytown, USA', '1990-05-15  00:00:00', '2023-11-20 08:30:00'),
 (2, "USER", 'Đạt', '123', '0822000369', 'test', '456 Oak Ave, Sometown, USA', '1988-09-22 00:00:00', '2023-11-21 09:45:00'),
@@ -238,7 +238,7 @@ VALUES
 (5, "USER", 'Eva Garcia', 'eva123', '999888777', 'eva@example.com', '654 Pine St, Othercity, USA', '1985-03-28  00:00:00', '2023-11-22 12:30:00'),
 (6, "USER", 'David Lee', 'davidpass', '333444555', 'david@example.com', '987 Birch St, Anothercity, USA', '1998-10-17  00:00:00', '2023-11-23 11:00:00');
 
-INSERT INTO `address` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
+INSERT INTO `addresses` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
 VALUES
 (1, 1, '135 Trần Hưng Đạo Name', 'HCM City', '12345', 1),
 (2, 2, '117 Trần Hưng Đạo', 'Quảng Trị', '67890', 1),
@@ -247,14 +247,14 @@ VALUES
 (5, 5, '345 Street Name', 'City E', '98765', 1),
 (6, 6, '678 Street Name', 'City F', '54321', 1);
 
-INSERT INTO `user_payment` (`id`, `user_id`, `payment_type`, `provider`, `account_no`, `expiry`, `is_default`)
+INSERT INTO `user_payments` (`id`, `user_id`, `payment_type`, `provider`, `account_no`, `expiry`, `is_default`)
 VALUES
 (1, 1, 'Credit Card', 'Visa', '12345', '2024-12-01', 1),
 (2, 1, 'PayPal', 'PayPal', '9876543210', '2023-11-30', 0),
 (3, 2, 'Credit Card', 'Visa', '222222222', '2024-11-01', 0),
 (4, 2, 'PayPal', 'PayPal', '119876543210', '2023-11-30', 1);
 
-INSERT INTO `order_items` (`id`, `product_id`)
+INSERT INTO `order_items` (`id`, `product_id` )
 VALUES
 (1, 1),
 (2, 12);
@@ -265,7 +265,7 @@ VALUES
 (2, 2, 2, 199.95),
 (3, 3, 3, 679.94);
 
-INSERT INTO `cart` (`id`, `user_id`)
+INSERT INTO `carts` (`id`, `user_id`)
 VALUES
 (1, 1),
 (2, 2),
@@ -277,7 +277,7 @@ VALUES
 (12, 12, 3, 2, 30);
 
 
-INSERT INTO `transaction` ( `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
+INSERT INTO `transactions` ( `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
 VALUES
   (1, 1, 1, 1, 1, 'Transaction 1 content'),
   (2, 2, 2, 2, 2, 'Transaction 2 content'),

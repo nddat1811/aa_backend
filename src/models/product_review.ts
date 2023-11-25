@@ -11,7 +11,7 @@ import {
 } from "typeorm";
 import { Product, User } from "./index";
 
-@Entity()
+@Entity({name: "product_reviews"})
 export class ProductReview {
   @PrimaryGeneratedColumn()
   id!: number;
