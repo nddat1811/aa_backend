@@ -4,7 +4,7 @@ import express, { Express } from "express";
 import morgan from "morgan";
 import Router from "./routes";
 import swaggerDocs from "./utils/swagger";
-import {connectToDatabase} from "./config/database"
+import {DatabaseSingleton, connectToDatabase} from "./config/database"
 
 const PORT = 8000;
 
@@ -21,7 +21,10 @@ app.use(Router);
 app.listen(PORT, async () => {
 
   console.log(`App is running at http://localhost:${PORT}`);
-  
-  await connectToDatabase();
+
+  // await connectToDatabase();
+  const connection = await DatabaseSingleton.getInstance();
   swaggerDocs(app, PORT);
+
+  // await DatabaseSingleton.closeConnection();
 });

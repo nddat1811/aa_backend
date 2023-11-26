@@ -8,6 +8,7 @@ import {
   JoinColumn,
   OneToOne,
   OneToMany,
+  DeleteDateColumn,
 } from "typeorm";
 import {
   ProductCategory,
@@ -15,9 +16,10 @@ import {
   ProductReview,
   CartItem,
   OrderItem,
+  ProductDiscount,
 } from "./index";
 
-@Entity({name: "products"})
+@Entity({ name: "products" })
 export class Product {
   @PrimaryGeneratedColumn()
   id: number | undefined;
@@ -55,11 +57,7 @@ export class Product {
   @UpdateDateColumn({ name: "updated_at" })
   updatedAt?: Date;
 
-  @Column({
-    name: "deleted_at",
-    type: "boolean", // Use a supported data type (e.g., boolean)
-    nullable: true, // Ensure it allows null values if needed
-  })
+  @DeleteDateColumn({ name: "deleted_at" })
   deletedAt?: boolean | null;
 
   @ManyToOne(() => ProductCategory, (category) => category.products)
@@ -74,7 +72,7 @@ export class Product {
     name: "inventory_id",
     referencedColumnName: "id",
   })
-  invertory?: ProductInventory;
+  inventory?: ProductInventory;
 
   @OneToMany(() => ProductReview, (productReviews) => productReviews.product)
   productReviews?: ProductReview[];
@@ -84,4 +82,11 @@ export class Product {
 
   @OneToMany(() => OrderItem, (orderItems) => orderItems.product)
   orderItems?: OrderItem[];
+
+  @ManyToOne(() => ProductDiscount, (discount) => discount.products)
+  @JoinColumn({
+    name: "discount_id",
+    referencedColumnName: "id",
+  })
+  discount?: ProductDiscount;
 }

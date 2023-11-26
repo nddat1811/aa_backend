@@ -43,7 +43,7 @@ export class ProductReview {
   product?: Product;
 
   @OneToOne(() => ProductReview)
-  @JoinColumn({ name: "parent_review_id", referencedColumnName: "id" })
+  @JoinColumn({ name: "parent_review", referencedColumnName: "id" })
   parentReview?: ProductReview;
 
   @ManyToOne(() => User, (user) => user.productReviews)

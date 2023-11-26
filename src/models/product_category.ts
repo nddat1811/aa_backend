@@ -37,6 +37,6 @@ export class ProductCategory {
   })
   deletedAt?: boolean | null;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category, { eager: true })
   products?: Product[];
 }

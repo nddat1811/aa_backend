@@ -9,8 +9,8 @@ SET sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,
 DROP TABLE IF EXISTS `products`;
 CREATE TABLE `products` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `code` VARCHAR(255) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
+  `code` VARCHAR(255),
+  `name` VARCHAR(255),
   `images` VARCHAR(255),
   `origin` VARCHAR(255),
   `material` VARCHAR(255),
@@ -20,14 +20,14 @@ CREATE TABLE `products` (
   `price` FLOAT,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` BOOLEAN NULL,
+  `deleted_at` timestamp NULL,
   `category_id` INT,
   `inventory_id` INT,
   `discount_id` INT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `product_discounts_categories`;
+DROP TABLE IF EXISTS `product_categories`;
 CREATE TABLE `product_categories` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
   `code` VARCHAR(255) NOT NULL,
@@ -182,20 +182,6 @@ ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 ALTER TABLE `addresses`
 ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-INSERT INTO `products` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`, `deleted_at`)
-VALUES
-('VONGTAY001', 'Vòng tay đá xanh', 'image1.jpg', 'Vietnam', 'Đá', 'Free size', '6 months', 'Vòng tay đá xanh dành cho mọi lứa tuổi.', 25.99, 1, 1, NULL, 0),
-('VONGTAY002', 'Vòng tay ngọc trai', 'image2.jpg', 'Vietnam', 'Ngọc trai', 'Free size', '1 year', 'Vòng tay ngọc trai cao cấp, sang trọng.', 35.99, 1, 2, 1, 0),
-('VONGTAY003', 'Vòng tay hạt gỗ', 'image3.jpg', 'Vietnam', 'Gỗ tự nhiên', 'Free size', '3 months', 'Vòng tay hạt gỗ tự nhiên, phong cách boho.', 19.99, 1, 3, NULL, 0),
-('NHAN001', 'Nhẫn bạc nữ', 'image4.jpg', 'Italy', 'Bạc', 'Size 6', '2 years', 'Nhẫn bạc nữ kiểu dáng đơn giản, tinh tế.', 29.99, 2, 4, NULL, 0),
-('NHAN002', 'Nhẫn bạc nam', 'image5.jpg', 'Italy', 'Bạc', 'Size 9', '1 year', 'Nhẫn bạc nam phong cách lịch lãm, mạnh mẽ.', 39.99, 2, 5, 2, 0),
-('NHAN003', 'Nhẫn vàng trắng', 'image6.jpg', 'USA', 'Vàng trắng 18K', 'Size 7', '5 years', 'Nhẫn vàng trắng 18K với thiết kế độc đáo.', 79.99, 2, 6, NULL, 0),
-('DAYCHUYEN001', 'Dây chuyền vàng hồng', 'image7.jpg', 'France', 'Vàng hồng 14K', '45cm', '1 year', 'Dây chuyền vàng hồng 14K đẳng cấp.', 149.99, 3, 7, NULL, 0),
-('DAYCHUYEN002', 'Dây chuyền ngọc trai', 'image8.jpg', 'Japan', 'Ngọc trai', '50cm', '3 months', 'Dây chuyền ngọc trai đẹp và quý phái.', 89.99, 3, 8, NULL, 0),
-('DAYCHUYEN003', 'Dây chuyền kim cương', 'image9.jpg', 'USA', 'Kim cương', '40cm', 'Lifetime', 'Dây chuyền kim cương cao cấp, bền vững.', 499.99, 3, 9, NULL, 0),
-('LACCHAN001', 'Lắc chân ngọc trai', 'image10.jpg', 'Vietnam', 'Ngọc trai', 'Adjustable', '2 years', 'Lắc chân ngọc trai phong cách và sang trọng.', 45.99, 4, 10, NULL, 0),
-('LACCHAN002', 'Lắc chân vàng 18K', 'image11.jpg', 'Italy', 'Vàng 18K', 'Adjustable', '5 years', 'Lắc chân vàng 18K đẳng cấp và tinh tế.', 89.99, 4, 11, NULL, 0),
-('LACCHAN003', 'Lắc chân bạc nữ', 'image12.jpg', 'Italy', 'Bạc', 'Adjustable', '1 year', 'Lắc chân bạc nữ đơn giản nhưng cuốn hút.', 30, 4, 12, 2, 0);
 
 INSERT INTO `product_categories` (`code`, `name`)
 VALUES
@@ -223,6 +209,22 @@ INSERT INTO `product_discounts` (`name`, `description`, `active`, `discount_perc
 VALUES
 ('Summer Sale', 'Giảm giá mùa hè', 1, 10),
 ('Flash Sale', 'Khuyến mãi flash', 1, 15);
+
+INSERT INTO `products` (`code`, `name`, `images`, `origin`, `material`, `size`, `warranty`, `description`, `price`, `category_id`, `inventory_id`, `discount_id`)
+VALUES
+('VONGTAY001', 'Vòng tay đá xanh', 'image1.jpg', 'Vietnam', 'Đá', 'Free size', '6 months', 'Vòng tay đá xanh dành cho mọi lứa tuổi.', 25.99, 1, 1, NULL),
+('VONGTAY002', 'Vòng tay ngọc trai', 'image2.jpg', 'Vietnam', 'Ngọc trai', 'Free size', '1 year', 'Vòng tay ngọc trai cao cấp, sang trọng.', 35.99, 1, 2, 1),
+('VONGTAY003', 'Vòng tay hạt gỗ', 'image3.jpg', 'Vietnam', 'Gỗ tự nhiên', 'Free size', '3 months', 'Vòng tay hạt gỗ tự nhiên, phong cách boho.', 19.99, 1, 3, NULL),
+('NHAN001', 'Nhẫn bạc nữ', 'image4.jpg', 'Italy', 'Bạc', 'Size 6', '2 years', 'Nhẫn bạc nữ kiểu dáng đơn giản, tinh tế.', 29.99, 2, 4, NULL),
+('NHAN002', 'Nhẫn bạc nam', 'image5.jpg', 'Italy', 'Bạc', 'Size 9', '1 year', 'Nhẫn bạc nam phong cách lịch lãm, mạnh mẽ.', 39.99, 2, 5, 2),
+('NHAN003', 'Nhẫn vàng trắng', 'image6.jpg', 'USA', 'Vàng trắng 18K', 'Size 7', '5 years', 'Nhẫn vàng trắng 18K với thiết kế độc đáo.', 79.99, 2, 6, NULL),
+('DAYCHUYEN001', 'Dây chuyền vàng hồng', 'image7.jpg', 'France', 'Vàng hồng 14K', '45cm', '1 year', 'Dây chuyền vàng hồng 14K đẳng cấp.', 149.99, 3, 7, NULL),
+('DAYCHUYEN002', 'Dây chuyền ngọc trai', 'image8.jpg', 'Japan', 'Ngọc trai', '50cm', '3 months', 'Dây chuyền ngọc trai đẹp và quý phái.', 89.99, 3, 8, NULL),
+('DAYCHUYEN003', 'Dây chuyền kim cương', 'image9.jpg', 'USA', 'Kim cương', '40cm', 'Lifetime', 'Dây chuyền kim cương cao cấp, bền vững.', 499.99, 3, 9, NULL),
+('LACCHAN001', 'Lắc chân ngọc trai', 'image10.jpg', 'Vietnam', 'Ngọc trai', 'Adjustable', '2 years', 'Lắc chân ngọc trai phong cách và sang trọng.', 45.99, 4, 10, NULL),
+('LACCHAN002', 'Lắc chân vàng 18K', 'image11.jpg', 'Italy', 'Vàng 18K', 'Adjustable', '5 years', 'Lắc chân vàng 18K đẳng cấp và tinh tế.', 89.99, 4, 11, NULL),
+('LACCHAN003', 'Lắc chân bạc nữ', 'image12.jpg', 'Italy', 'Bạc', 'Adjustable', '1 year', 'Lắc chân bạc nữ đơn giản nhưng cuốn hút.', 30, 4, 12, 2);
+
 
 INSERT INTO `product_reviews` (`product_id`, `user_id`, `parent_review`, `content`, `like`, `deleted_at`)
 VALUES

@@ -30,6 +30,7 @@ export class DatabaseSingleton {
         password: "test",
         database: "test",
         entities: [
+          Product,
           ProductCategory,
           Cart,
           Address,
@@ -38,13 +39,13 @@ export class DatabaseSingleton {
           UserPayment,
           Transaction,
           ProductReview,
-          Product,
           ProductDiscount,
           ProductInventory,
           OrderDetail,
           OrderItem,
         ],
-        // synchronize: true, // dòng bug qq má m
+        logging: true,
+        synchronize: false, // dòng bug qq má m
       };
 
       try {
@@ -59,6 +60,14 @@ export class DatabaseSingleton {
 
     return DatabaseSingleton.instance;
   }
+
+  static async closeConnection(): Promise<void> {
+    if (DatabaseSingleton.instance) {
+      await DatabaseSingleton.instance.close();
+      console.log("Connection closed");
+      DatabaseSingleton.instance = null;
+    }
+  }
 }
 
 // Sử dụng DatabaseSingleton để lấy kết nối đến cơ sở dữ liệu
@@ -71,3 +80,4 @@ export async function connectToDatabase(): Promise<void> {
     console.error("Error connecting to the database:", error);
   }
 }
+
