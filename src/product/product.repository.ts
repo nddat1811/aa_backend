@@ -123,6 +123,8 @@ class ProductService {
         .createQueryBuilder("product")
         .leftJoin("product.category", "category")
         .leftJoin("product.inventory", "inventory")
+        .leftJoinAndSelect("product.productReviews", "productReviews")
+        .leftJoinAndSelect("product.discount", "discount")
         .select([
           "product.id",
           "product.code",
@@ -136,6 +138,8 @@ class ProductService {
           "product.updatedAt",
           "inventory.quantity",
           "category.name",
+          "productReviews",
+          "discount"
         ])
         .where({
           id: id,
