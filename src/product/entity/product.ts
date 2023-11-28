@@ -17,12 +17,12 @@ import {
   CartItem,
   OrderItem,
   ProductDiscount,
-} from "./index";
+} from "../../models/index";
 
 @Entity({ name: "products" })
 export class Product {
   @PrimaryGeneratedColumn()
-  id: number | undefined;
+  id!: number;
 
   @Column()
   code?: string;

@@ -1,6 +1,6 @@
 // ProductCategoryController.ts
 import { Request, Response } from "express";
-import { productCategoryRepository } from "../repositories/product_category.repository";
+import { productCategoryRepository } from "./product_category.repository";
 import {
   returnResponse,
   CODE_SUCCESS,
@@ -36,5 +36,8 @@ const getProductCategories = async (req: Request, res: Response): Promise<void> 
     res.status(500).send("Internal Server Error");
   }
 };
+
+
+
 
 export default getProductCategories;

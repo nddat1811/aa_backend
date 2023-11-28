@@ -20,7 +20,7 @@ CREATE TABLE `products` (
   `price` FLOAT,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `deleted_at` timestamp NULL,
+  `deleted_at` BOOLEAN NULL,
   `category_id` INT,
   `inventory_id` INT,
   `discount_id` INT

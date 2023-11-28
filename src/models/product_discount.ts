@@ -7,7 +7,7 @@ import {
   DeleteDateColumn,
   OneToMany,
 } from "typeorm";
-import { Product } from "./product";
+import { Product } from "../product/entity/product";
 
 @Entity({name: "product_discounts"})
 export class ProductDiscount {
