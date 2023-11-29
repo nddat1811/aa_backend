@@ -29,7 +29,7 @@ import { CreateProductDto } from "./dto/create_product.dto";
  *           type: integer
  *           default: 10  # Default value for pageSize
  *         description: The number of items to return per page.
-  *       - in: query
+ *       - in: query
  *         name: del
  *         schema:
  *           type: boolean
@@ -45,13 +45,17 @@ const getProducts = async (req: Request, res: Response): Promise<void> => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const pageSize = parseInt(req.query.pageSize as string) || 10;
-    const del = req.query.del === 'true';
+    const del = req.query.del === "true";
     const { offset, limit } = calcPagination(page, pageSize);
 
     const response = await productService.getAllProducts(offset, limit, del);
     if (!response) {
       res.send(
-        returnResponse(ERROR_BAD_REQUEST, "The returned data is unsuccessful.", response)
+        returnResponse(
+          ERROR_BAD_REQUEST,
+          "The returned data is unsuccessful.",
+          response
+        )
       );
     } else {
       res.send(
@@ -127,19 +131,26 @@ const getProducts = async (req: Request, res: Response): Promise<void> => {
  */
 const createNewProduct = async (req: Request, res: Response): Promise<void> => {
   try {
-
     const createProductDto: CreateProductDto = req.body;
 
     const createdProduct = await productService.createProduct(createProductDto);
 
-    console.log(createdProduct)
+    console.log(createdProduct);
     if (!createdProduct) {
       res.send(
-        returnResponse(ERROR_BAD_REQUEST, "Bad request - Invalid input data", createdProduct)
+        returnResponse(
+          ERROR_BAD_REQUEST,
+          "Bad request - Invalid input data",
+          createdProduct
+        )
       );
     } else {
       res.send(
-        returnResponse(CODE_SUCCESS, "Product created successfully", createdProduct)
+        returnResponse(
+          CODE_SUCCESS,
+          "Product created successfully",
+          createdProduct
+        )
       );
     }
   } catch (error) {
@@ -196,11 +207,9 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
 
     const foundProduct = await productService.findProductById(productId);
 
-    console.log("found: ", foundProduct)
+    console.log("found: ", foundProduct);
     if (!foundProduct) {
-      res.send(
-        returnResponse(ERROR_NOT_FOUND, "Product not found", null)
-      );
+      res.send(returnResponse(ERROR_NOT_FOUND, "Product not found", null));
     } else {
       res.send(
         returnResponse(CODE_SUCCESS, "Product found successfully", foundProduct)
@@ -212,4 +221,81 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export {getProducts, createNewProduct, findProductById} ;
+/**
+ * @openapi
+ * /v1/product/search:
+ *   get:
+ *     summary: Get products based on search criteria
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1  # Default value for page
+ *         description: The page number for pagination.
+ *       - in: query
+ *         name: pageSize
+ *         schema:
+ *           type: integer
+ *           default: 10  # Default value for pageSize
+ *         description: The number of items to return per page.
+ *       - in: query
+ *         name: fullTextSearch
+ *         schema:
+ *           type: string
+ *           description: Text to search in product code and name.
+ *       - in: query
+ *         name: categoryName
+ *         schema:
+ *           type: string
+ *           description: The category name to filter by.
+ *       - in: query
+ *         name: priceMin
+ *         schema:
+ *           type: number
+ *           default: 0  # Default value for minPrice
+ *           description: The price min to filter by.
+ *       - in: query
+ *         name: priceMax
+ *         schema:
+ *           type: number
+ *           default: 100000  # Default value for maxPrice
+ *           description: The price max to filter by.
+ *     responses:
+ *       '200':
+ *         description: The data of the product list has been successfully returned
+ *       '400':
+ *         description: The returned data is unsuccessful.
+ */
+const searchProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const pageSize = parseInt(req.query.pageSize as string) || 10;
+    const priceMin = parseInt(req.query.priceMin as string) || 1;
+    const priceMax = parseInt(req.query.priceMax as string) || 10;
+
+    const fullTextSearch = (req.query.fullTextSearch as string) || "";
+    const categoryName = (req.query.categoryName as string) || "";
+    const { offset, limit } = calcPagination(page, pageSize);
+    const foundProduct = await productService.searchProducts(
+      offset,
+      limit,
+      fullTextSearch,
+      categoryName,
+      priceMin,
+      priceMax
+    );
+
+    if (!foundProduct) {
+      res.send(returnResponse(ERROR_NOT_FOUND, "Product not found", null));
+    } else {
+      res.send(
+        returnResponse(CODE_SUCCESS, "Product found successfully", foundProduct)
+      );
+    }
+  } catch (error) {
+    console.error("Error while finding product:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+export { getProducts, createNewProduct, findProductById, searchProduct };
