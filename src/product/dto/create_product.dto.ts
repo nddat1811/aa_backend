@@ -39,10 +39,6 @@ export class CreateProductDto {
   @IsNumber()
   categoryId?: number;
 
-  // @IsOptional()
-  // @IsNumber()
-  // inventoryId?: number;
-
   @IsOptional()
   @IsNumber()
   discountId?: number;
@@ -50,4 +46,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsNumber()
   quantity?: number;
+
+  @IsOptional()
+  @IsNumber()
+  inventoryId?: number;
 }

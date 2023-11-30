@@ -19,6 +19,8 @@ interface SearchTotalHits {
   value: number;
   relation: string;
 }
+
+const indexName = "products";
 class ProductService {
   async getAllProducts(
     offset: number,
@@ -26,7 +28,6 @@ class ProductService {
     del: boolean
   ): Promise<ProductPage> {
     const productRepository = getRepository(Product);
-
     try {
       const queryBuilder = productRepository
         .createQueryBuilder("product")
@@ -58,19 +59,9 @@ class ProductService {
           "productReviews",
         ]);
 
-      if (!del) {
-        // Only include this condition if del is false (include soft-deleted records)
-        queryBuilder.withDeleted();
-      }
-
+      // query all Products to mapping to elasticsearch
       const allProducts = await queryBuilder.getMany();
 
-      queryBuilder.skip(offset).take(limit);
-
-      const [products, total] = await queryBuilder.getManyAndCount();
-
-      // Check if the index exists
-      const indexName = "products";
       const bulkRequestBody = allProducts.flatMap((product) => [
         { index: { _index: indexName, _id: product.id } },
         {
@@ -102,8 +93,19 @@ class ProductService {
         console.error("Elasticsearch bulk operation errors:", response.items);
       }
 
+      // del = true --> not include deleted product
+      // del = false --> include deleted product
+      if (!del) {
+        // Only include this condition if del is false (include soft-deleted records)
+        queryBuilder.withDeleted();
+      }
+      //skip offset and take limit
+      queryBuilder.skip(offset).take(limit);
+      //query and calc total
+      const [products, total] = await queryBuilder.getManyAndCount();
       const currentPage = Math.ceil((offset + 1) / limit);
       const currentTotal = products.length;
+
       return {
         total,
         currentTotal,
@@ -116,7 +118,9 @@ class ProductService {
     }
   }
 
-  async createProduct(createProductDto: CreateProductDto): Promise<Product> {
+  async createProduct(
+    createProductDto: CreateProductDto
+  ): Promise<[Product | null, Error | null]> {
     const productRepository = getRepository(Product);
     const categoryRepository = getRepository(ProductCategory);
     const inventoryRepository = getRepository(ProductInventory);
@@ -125,11 +129,12 @@ class ProductService {
     try {
       const { quantity, categoryId, discountId, ...productData } =
         createProductDto;
-      // Tạo mới đối tượng Product từ DTO
+      // CreateTạo new Product from DTO
       const newProduct = productRepository.create({
         ...productData,
       });
 
+      // find category and check
       if (categoryId !== undefined && categoryId !== null) {
         // Assuming `categoryRepository.findOne` returns a Promise<ProductCategory>
         const category = await categoryRepository.findOneBy({
@@ -139,25 +144,24 @@ class ProductService {
         if (category) {
           newProduct.category = category;
         } else {
-          // Handle the case where the category with the given ID is not found
-          // You might throw an error, log a message, or handle it in another way
+          return [null, Error("Category not found")];
         }
       }
-
+      // create new Inventory - map with new Product
       const newInventory = inventoryRepository.create({
         quantity,
       });
 
       const createdInventory = await inventoryRepository.save(newInventory);
-
+      //Assign to new Product
       newProduct.inventory = createdInventory;
 
-      // Lưu đối tượng mới vào cơ sở dữ liệu
+      // Save newProduct into database
       const createdProduct = await productRepository.save(newProduct);
+      // Insert new Product into elasticSearch
       await elasticSearchClient.index({
-        index: "products",
+        index: indexName,
         body: {
-          // Chọn các trường bạn muốn index
           id: createdProduct.id,
           name: createdProduct.name,
           code: createdProduct.code,
@@ -176,7 +180,7 @@ class ProductService {
         },
       });
       console.log("hiihi: ", createdProduct);
-      return createdProduct;
+      return [createdProduct, null];
     } catch (error) {
       console.error("Error creating product", error);
       throw error;
@@ -188,7 +192,7 @@ class ProductService {
       const id = +productId;
 
       const body = await elasticSearchClient.search({
-        index: "products", // Replace with your Elasticsearch index name
+        index: indexName,
         body: {
           query: {
             term: { id: id },
@@ -249,7 +253,7 @@ class ProductService {
     priceMin: number,
     priceMax: number,
     sort: string
-  ) {
+  ): Promise<ProductPage> {
     try {
       console.log(
         `${categoryName},  ${priceMin}, ${priceMax}, ${fullTextSearch} , ${sort},`
@@ -262,14 +266,20 @@ class ProductService {
           query: {
             bool: {
               must: [
-                categoryName.trim()
+                //check if have category --> query category
+                categoryName
                   ? {
                       match: {
-                        category: categoryName.trim(),
+                        category: categoryName,
                       },
                     }
                   : null,
                 {
+                  // match --> match 1 word in the sentence --> output
+                  // wildcard --> match %word% in the sentence --> output
+                  // use should --> or becuase match must input accurated word
+                  // Ex: gold ring --> match input gold or ring --> output
+                  // use wildcard --> %go% --> output
                   bool: {
                     should: [
                       {
@@ -295,6 +305,7 @@ class ProductService {
                     ],
                   },
                 },
+                //price in range (min, max)
                 priceMin !== null && priceMax !== null
                   ? {
                       range: {
@@ -306,6 +317,7 @@ class ProductService {
                     }
                   : null,
               ],
+              // not included deleted != 1 (true)
               must_not: [
                 {
                   term: {
@@ -332,6 +344,7 @@ class ProductService {
 
       const body = await elasticSearchClient.search(searchParams);
       console.log("\n\n\nhi: ", body);
+      //Handle total of search Products
       let total = 0;
       let totalHits: number | SearchTotalHits | undefined = body.hits.total;
 
@@ -341,20 +354,156 @@ class ProductService {
         }
       } else {
         console.log("Total Hits is undefined.");
+        return {
+          total: 0,
+          currentTotal: 0,
+          currentPage: 0,
+          data: [],
+        };
       }
 
       const currentTotal = body.hits.hits.length;
       const currentPage = Math.ceil((offset + 1) / limit);
       const products = body.hits.hits.map((hit) => hit._source);
+
       return {
         total,
         currentTotal,
         currentPage,
-        data: products,
+        data: products as Product[],
       };
     } catch (error) {
       console.error("Error while searching products:", error);
       throw error; // You might want to handle this error more gracefully in a production environment
+    }
+  }
+
+  async updateProduct(
+    productId: string,
+    updateProductDto: CreateProductDto
+  ): Promise<[Product | null, Error | null]> {
+    const productRepository = getRepository(Product);
+    const categoryRepository = getRepository(ProductCategory);
+    const inventoryRepository = getRepository(ProductInventory);
+
+    try {
+      // Find existing product by ID
+      const existingProduct = await productRepository
+        .createQueryBuilder("product")
+        .leftJoin("product.category", "category")
+        .leftJoin("product.inventory", "inventory")
+        .leftJoinAndSelect("product.productReviews", "productReviews")
+        .leftJoinAndSelect("product.discount", "discount")
+        .select([
+          "product.id",
+          "product.code",
+          "product.name",
+          "product.images",
+          "product.origin",
+          "product.material",
+          "product.size",
+          "product.warranty",
+          "product.createdAt",
+          "product.updatedAt",
+          "inventory.quantity",
+          "inventory.id",
+          "category.name",
+          "productReviews",
+          "discount",
+        ])
+        .where({
+          id: productId,
+        })
+        .getOne();
+      // return Product not found by ID
+      if (!existingProduct) {
+        return [null, Error("Product not found by ID")];
+      }
+      const { quantity, categoryId, ...updatedProductData } = updateProductDto;
+      // Update existing product properties
+      productRepository.merge(existingProduct, updatedProductData);
+
+      // Update category if categoryId is provided
+      if (existingProduct.category != categoryId) {
+        if (categoryId !== undefined && categoryId !== null) {
+          const category = await categoryRepository.findOneBy({
+            id: categoryId,
+          });
+
+          if (category) {
+            existingProduct.category = category;
+          } else {
+            return [null, Error("Category not found")];
+          }
+        }
+      }
+
+      // Update inventory if quantity is provided
+      if (quantity !== undefined && quantity !== null) {
+        const inventoryId = existingProduct.inventory?.id;
+        const inventory = await inventoryRepository.findOneBy({
+          id: inventoryId,
+        });
+
+        if (inventory && inventory.quantity != quantity) {
+          inventory.quantity = quantity;
+          await inventoryRepository.save(inventory);
+        } else {
+          return [null, Error("Inventory not found")];
+        }
+      }
+
+      // Save the updated product into the database
+      const updatedProduct = await productRepository.save(existingProduct);
+
+      // Update the product in ElasticSearch
+      // Search ID of product in elasticSearch
+      const searchResponse = await elasticSearchClient.search({
+        index: indexName,
+        body: {
+          query: {
+            term: { id: updatedProduct.id },
+          },
+        },
+      });
+      if (searchResponse) {
+        const hits = searchResponse.hits.hits as Array<{
+          _id: string;
+          _index: string;
+          _score: number;
+          _source: Record<string, unknown>;
+        }>;
+
+        await elasticSearchClient.update({
+          index: indexName,
+          id: hits[0]._id,
+          body: {
+            doc: {
+              name: updatedProduct.name,
+              code: updatedProduct.code,
+              images: updatedProduct.images,
+              origin: updatedProduct.origin,
+              material: updatedProduct.material,
+              size: updatedProduct.size,
+              warranty: updatedProduct.warranty,
+              description: updatedProduct.description,
+              price: updatedProduct.price,
+              category: updatedProduct.category?.name,
+              inventory: updatedProduct.inventory?.quantity,
+              createdAt: updatedProduct.createdAt,
+              updatedAt: updatedProduct.updatedAt,
+              deletedAt: updatedProduct.deletedAt,
+            },
+          },
+        });
+      } else {
+        return [null, Error("Can't update product in elasticsearch")];
+      }
+
+      return [updatedProduct, null];
+    } catch (error) {
+      console.error("Error updating product", error);
+      throw error;
     }
   }
 }

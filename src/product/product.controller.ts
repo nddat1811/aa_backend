@@ -3,6 +3,7 @@ import { Request, Response } from "express";
 import {
   CODE_SUCCESS,
   ERROR_BAD_REQUEST,
+  CODE_CREATED_SUCCESS,
   returnResponse,
   returnPagingResponse,
   ERROR_NOT_FOUND,
@@ -13,7 +14,7 @@ import { CreateProductDto } from "./dto/create_product.dto";
 
 /**
  * @openapi
- * /v1/product:
+ * /v1/product/list:
  *   get:
  *     summary: Get all product (include deleted Product)
  *     parameters:
@@ -90,36 +91,47 @@ const getProducts = async (req: Request, res: Response): Promise<void> => {
  *               code:
  *                 type: string
  *                 description: The product code.
+ *                 default: KHUYENTAI
  *               name:
  *                 type: string
  *                 description: The product name.
+ *                 default: Khuyên tai lấp lánh
  *               images:
  *                 type: string
  *                 description: The product images.
+ *                 default: image.jpg
  *               origin:
  *                 type: string
  *                 description: The product origin.
+ *                 default: VN
  *               material:
  *                 type: string
  *                 description: The product material.
+ *                 default: Kim cương
  *               size:
  *                 type: string
  *                 description: The product size.
+ *                 default: nhỏ 4x6
  *               warranty:
  *                 type: string
  *                 description: The product warranty.
+ *                 default: 1 năm
  *               description:
  *                 type: string
  *                 description: The product description.
+ *                 default: Khuyên tai lấp lánh phù hợp cho mọi lứa tuổi
  *               price:
  *                 type: number
  *                 description: The product price.
+ *                 default: 10
  *               categoryId:
  *                 type: integer
  *                 description: The ID of the product category.
+ *                 default: 1
  *               quantity:
  *                 type: integer
  *                 description: The quantity of the product inventory.
+ *                 default: 10
  *               discountId:
  *                 type: integer
  *                 description: The ID of the product discount.
@@ -133,20 +145,20 @@ const createNewProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const createProductDto: CreateProductDto = req.body;
 
-    const createdProduct = await productService.createProduct(createProductDto);
+    const [createdProduct, err] = await productService.createProduct(createProductDto);
 
-    if (!createdProduct) {
+    if (err) {
       res.send(
         returnResponse(
           ERROR_BAD_REQUEST,
-          "Bad request - Invalid input data",
+          err.message,
           createdProduct
         )
       );
     } else {
       res.send(
         returnResponse(
-          CODE_SUCCESS,
+          CODE_CREATED_SUCCESS,
           "Product created successfully",
           createdProduct
         )
@@ -206,7 +218,6 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
 
     const foundProduct = await productService.findProductById(productId);
 
-    console.log("found: ", foundProduct);
     if (!foundProduct) {
       res.send(returnResponse(ERROR_NOT_FOUND, "Product not found", null));
     } else {
@@ -290,8 +301,8 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
     const foundProduct = await productService.searchProducts(
       offset,
       limit,
-      fullTextSearch,
-      categoryName,
+      fullTextSearch.trim(),
+      categoryName.trim(),
       priceMin,
       priceMax,
       sort
@@ -309,4 +320,107 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
     res.status(500).send("Internal Server Error");
   }
 };
-export { getProducts, createNewProduct, findProductById, searchProduct };
+
+/**
+ * @openapi
+ * /v1/product/update_product/{id}:
+ *   put:
+ *     summary: Update a new product
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the product to retrieve
+ *         schema:
+ *           type: string
+ *           default: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               code:
+ *                 type: string
+ *                 description: The product code.
+ *                 default: KHUYENTAI
+ *               name:
+ *                 type: string
+ *                 description: The product name.
+ *                 default: Khuyên tai lấp lánh
+ *               images:
+ *                 type: string
+ *                 description: The product images.
+ *                 default: image.jpg
+ *               origin:
+ *                 type: string
+ *                 description: The product origin.
+ *                 default: VN
+ *               material:
+ *                 type: string
+ *                 description: The product material.
+ *                 default: Kim cương
+ *               size:
+ *                 type: string
+ *                 description: The product size.
+ *                 default: nhỏ 4x6
+ *               warranty:
+ *                 type: string
+ *                 description: The product warranty.
+ *                 default: 1 năm
+ *               description:
+ *                 type: string
+ *                 description: The product description.
+ *                 default: Khuyên tai lấp lánh phù hợp cho mọi lứa tuổi
+ *               price:
+ *                 type: number
+ *                 description: The product price.
+ *                 default: 10
+ *               categoryId:
+ *                 type: integer
+ *                 description: The ID of the product category.
+ *                 default: 1
+ *               quantity:
+ *                 type: integer
+ *                 description: The quantity of the product inventory.
+ *                 default: 10
+ *               discountId:
+ *                 type: integer
+ *                 description: The ID of the product discount.
+ *     responses:
+ *       '200':
+ *         description: Product updated successfully
+ *       '400':
+ *         description: Bad request - Invalid input data
+ */
+const updateProduct = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const productId: string = req.params.id;
+    const updateProductDto: CreateProductDto = req.body;
+
+    const [updatedProduct, err] = await productService.updateProduct(productId, updateProductDto);
+
+    if (err) {
+      res.send(
+        returnResponse(
+          ERROR_BAD_REQUEST,
+          err.message,
+          updatedProduct
+        )
+      );
+    } else {
+      res.send(
+        returnResponse(
+          CODE_SUCCESS,
+          "Product updated successfully",
+          updatedProduct
+        )
+      );
+    }
+  } catch (error) {
+    console.error("Error while processing products:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+export { getProducts, createNewProduct, findProductById, searchProduct, updateProduct };
