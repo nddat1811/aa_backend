@@ -44,7 +44,7 @@ export class DatabaseSingleton {
           OrderDetail,
           OrderItem,
         ],
-        logging: true,
+        // logging: true,
         synchronize: false, // dòng bug qq má m
       };
 
@@ -80,4 +80,3 @@ export async function connectToDatabase(): Promise<void> {
     console.error("Error connecting to the database:", error);
   }
 }
-

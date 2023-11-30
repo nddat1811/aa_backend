@@ -135,7 +135,6 @@ const createNewProduct = async (req: Request, res: Response): Promise<void> => {
 
     const createdProduct = await productService.createProduct(createProductDto);
 
-    console.log(createdProduct);
     if (!createdProduct) {
       res.send(
         returnResponse(
@@ -261,6 +260,15 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
  *           type: number
  *           default: 100000  # Default value for maxPrice
  *           description: The price max to filter by.
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - asc
+ *             - desc
+ *           default: desc  # Default value for maxPrice
+ *           description: The sorting order. Use 'asc' for ascending and 'desc' for descending.
  *     responses:
  *       '200':
  *         description: The data of the product list has been successfully returned
@@ -273,17 +281,20 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
     const pageSize = parseInt(req.query.pageSize as string) || 10;
     const priceMin = parseInt(req.query.priceMin as string) || 1;
     const priceMax = parseInt(req.query.priceMax as string) || 10;
-
     const fullTextSearch = (req.query.fullTextSearch as string) || "";
     const categoryName = (req.query.categoryName as string) || "";
+    const sort = (req.query.sort as string) || "asc";
+
     const { offset, limit } = calcPagination(page, pageSize);
+
     const foundProduct = await productService.searchProducts(
       offset,
       limit,
       fullTextSearch,
       categoryName,
       priceMin,
-      priceMax
+      priceMax,
+      sort
     );
 
     if (!foundProduct) {

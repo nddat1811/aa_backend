@@ -45,24 +45,62 @@ class ProductService {
           "product.material",
           "product.size",
           "product.warranty",
+          "product.description",
+          "product.price",
           "product.createdAt",
           "product.updatedAt",
+          "product.deletedAt",
           "inventory.quantity",
           "category.name",
           "cartItems",
           "orderItems",
           "discount",
           "productReviews",
-        ])
-        .skip(offset)
-        .take(limit);
+        ]);
 
       if (!del) {
         // Only include this condition if del is false (include soft-deleted records)
         queryBuilder.withDeleted();
       }
 
+      const allProducts = await queryBuilder.getMany();
+
+      queryBuilder.skip(offset).take(limit);
+
       const [products, total] = await queryBuilder.getManyAndCount();
+
+      // Check if the index exists
+      const indexName = "products";
+      const bulkRequestBody = allProducts.flatMap((product) => [
+        { index: { _index: indexName, _id: product.id } },
+        {
+          // Chọn các trường bạn muốn index
+          id: product.id,
+          name: product.name,
+          code: product.code,
+          images: product.images,
+          origin: product.origin,
+          material: product.material,
+          size: product.size,
+          warranty: product.warranty,
+          description: product.description,
+          price: product.price,
+          category: product.category?.name,
+          inventory: product.inventory?.quantity,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
+          deletedAt: product.deletedAt,
+        },
+      ]);
+
+      const response = await elasticSearchClient.bulk({
+        index: indexName,
+        body: bulkRequestBody,
+      });
+
+      if (response.errors) {
+        console.error("Elasticsearch bulk operation errors:", response.items);
+      }
 
       const currentPage = Math.ceil((offset + 1) / limit);
       const currentTotal = products.length;
@@ -209,11 +247,12 @@ class ProductService {
     fullTextSearch: string,
     categoryName: string,
     priceMin: number,
-    priceMax: number
+    priceMax: number,
+    sort: string
   ) {
     try {
       console.log(
-        `${categoryName},  ${priceMin}, ${priceMax}, ${fullTextSearch}`
+        `${categoryName},  ${priceMin}, ${priceMax}, ${fullTextSearch} , ${sort},`
       );
       const searchParams = {
         index: "products",
@@ -256,9 +295,38 @@ class ProductService {
                     ],
                   },
                 },
+                priceMin !== null && priceMax !== null
+                  ? {
+                      range: {
+                        price: {
+                          gte: priceMin,
+                          lte: priceMax,
+                        },
+                      },
+                    }
+                  : null,
+              ],
+              must_not: [
+                {
+                  term: {
+                    deletedAt: 1,
+                  },
+                },
               ],
             },
           },
+          sort: [
+            {
+              price: {
+                order: sort, // Sắp xếp tăng dần theo giá
+              },
+            },
+            // {
+            //   createdAt: {
+            //     order: "desc", // Sắp xếp giảm dần theo createdAt
+            //   },
+            // },
+          ],
         },
       };
 

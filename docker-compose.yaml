@@ -15,7 +15,14 @@ services:
       MYSQL_ROOT_HOST: '%'
     ports:
       - 3306:3306
-
+  elasticsearch:
+    image: elasticsearch:8.11.1
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+      - 9300:9300
   adminer:
     image: adminer
     restart: always
