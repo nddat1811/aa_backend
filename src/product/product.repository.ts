@@ -252,11 +252,11 @@ class ProductService {
     categoryName: string,
     priceMin: number,
     priceMax: number,
-    sort: string
+    sortValue: string
   ): Promise<ProductPage> {
     try {
       console.log(
-        `${categoryName},  ${priceMin}, ${priceMax}, ${fullTextSearch} , ${sort},`
+        `${categoryName},  ${priceMin}, ${priceMax}, ${fullTextSearch} , ${sortValue},`
       );
       const searchParams = {
         index: "products",
@@ -327,18 +327,20 @@ class ProductService {
               ],
             },
           },
-          sort: [
-            {
-              price: {
-                order: sort, // Sắp xếp tăng dần theo giá
-              },
-            },
-            // {
-            //   createdAt: {
-            //     order: "desc", // Sắp xếp giảm dần theo createdAt
-            //   },
-            // },
-          ],
+          sort: sortValue
+            ? [
+                {
+                  price: {
+                    order: sortValue, // Sắp xếp tăng dần theo giá
+                  },
+                },
+                // {
+                //   createdAt: {
+                //     order: "desc", // Sắp xếp giảm dần theo createdAt
+                //   },
+                // },
+              ]
+            : undefined,
         },
       };
 
@@ -405,6 +407,7 @@ class ProductService {
           "product.warranty",
           "product.createdAt",
           "product.updatedAt",
+          "product.deletedAt",
           "inventory.quantity",
           "inventory.id",
           "category.name",

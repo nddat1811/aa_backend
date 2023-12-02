@@ -276,9 +276,10 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
  *         schema:
  *           type: string
  *           enum:
+ *             - null
  *             - asc
  *             - desc
- *           default: desc  # Default value for maxPrice
+ *           default: null  # Default value for maxPrice
  *           description: The sorting order. Use 'asc' for ascending and 'desc' for descending.
  *     responses:
  *       '200':
@@ -294,7 +295,7 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
     const priceMax = parseInt(req.query.priceMax as string) || 10;
     const fullTextSearch = (req.query.fullTextSearch as string) || "";
     const categoryName = (req.query.categoryName as string) || "";
-    const sort = (req.query.sort as string) || "asc";
+    const sort = (req.query.sort as string) || "";
 
     const { offset, limit } = calcPagination(page, pageSize);
 
@@ -388,6 +389,10 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
  *               discountId:
  *                 type: integer
  *                 description: The ID of the product discount.
+ *               deletedAt:
+ *                 type: boolean
+ *                 default: null  # Default value for get all product (include deleted)
+ *                 description: To deleted
  *     responses:
  *       '200':
  *         description: Product updated successfully

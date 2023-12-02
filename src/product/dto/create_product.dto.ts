@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsNumber } from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, IsNumber, IsBoolean } from "class-validator";
 
 export class CreateProductDto {
   @IsOptional()
@@ -50,4 +50,8 @@ export class CreateProductDto {
   @IsOptional()
   @IsNumber()
   inventoryId?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  deletedAt?: boolean;
 }
