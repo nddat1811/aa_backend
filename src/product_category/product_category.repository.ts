@@ -3,6 +3,7 @@ import { ProductCategory } from "../models";
 import { CreateProductCategoryDto } from "./dto/create_product_category.dto";
 import { elasticSearchClient } from "../helper/elasticsearch";
 
+const indexProductName = "products"
 class ProductCategoryService {
   async getAllProductCategories(): Promise<Array<ProductCategory>> {
     const categoryRepository = getRepository(ProductCategory);
@@ -72,7 +73,7 @@ class ProductCategoryService {
       // Update the product in ElasticSearch
       // Search ID of product in elasticSearch
       const searchResponse = await elasticSearchClient.search({
-        index: "products",
+        index: indexProductName,
         body: {
           query: {
             bool: {
@@ -97,9 +98,8 @@ class ProductCategoryService {
         }>;
 
         for (const hit of hits) {
-        console.log(hit)
           await elasticSearchClient.update({
-            index: "products",
+            index: indexProductName,
             id: hit._id,
             body: {
               doc: {
