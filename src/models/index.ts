@@ -3,7 +3,7 @@ import { Cart } from "./cart";
 import { CartItem } from "./cart_item";
 import { OrderItem } from "./oder_item";
 import { OrderDetail } from "./order_detail";
-import { ProductCategory } from "../product_category/product_category";
+import { ProductCategory } from "../product_category/entity/product_category";
 import { ProductDiscount } from "./product_discount";
 import { ProductInventory } from "./product_inventory";
 import { ProductReview } from "./product_review";

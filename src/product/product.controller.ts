@@ -78,7 +78,7 @@ const getProducts = async (req: Request, res: Response): Promise<void> => {
 
 /**
  * @openapi
- * /v1/product/new_product:
+ * /v1/product/new:
  *   post:
  *     summary: Create a new product
  *     requestBody:
@@ -323,9 +323,9 @@ const searchProduct = async (req: Request, res: Response): Promise<void> => {
 
 /**
  * @openapi
- * /v1/product/update_product/{id}:
+ * /v1/product/update/{id}:
  *   put:
- *     summary: Update a new product
+ *     summary: Update product
  *     parameters:
  *       - in: path
  *         name: id
