@@ -8,7 +8,7 @@ import {
   returnPagingResponse,
   ERROR_NOT_FOUND,
 } from "../helper/response";
-import { productService } from "./product.repository";
+import { productService } from "./product.service";
 import { calcPagination } from "../helper/paging";
 import { CreateProductDto } from "./dto/create_product.dto";
 

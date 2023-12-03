@@ -1,6 +1,6 @@
 // ProductCategoryController.ts
 import { Request, Response } from "express";
-import { productCategoryService } from "./product_category.repository";
+import { productCategoryService } from "./product_category.service";
 import {
   returnResponse,
   CODE_SUCCESS,
@@ -43,7 +43,7 @@ const getProductCategories = async (req: Request, res: Response): Promise<void> 
  * @openapi
  * /v1/product_category/new:
  *   post:
- *     summary: Create a new product
+ *     summary: Create a new product category
  *     requestBody:
  *       required: true
  *       content:
