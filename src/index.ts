@@ -5,10 +5,15 @@ import morgan from "morgan";
 import Router from "./routes";
 import swaggerDocs from "./utils/swagger";
 import { DatabaseSingleton, connectToDatabase } from "./config/database";
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const PORT = 8000;
 
 const app: Express = express();
+
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(morgan("tiny"));

@@ -1,13 +1,11 @@
-// ProductCategoryController.ts
 import { Request, Response } from "express";
+import { returnResponse, returnPagingResponse } from "../helper/response";
 import {
+  CODE_CREATED_SUCCESS,
   CODE_SUCCESS,
   ERROR_BAD_REQUEST,
-  CODE_CREATED_SUCCESS,
-  returnResponse,
-  returnPagingResponse,
   ERROR_NOT_FOUND,
-} from "../helper/response";
+} from "../helper/constant";
 import { productService } from "./product.service";
 import { calcPagination } from "../helper/paging";
 import { CreateProductDto } from "./dto/create_product.dto";
@@ -145,16 +143,12 @@ const createNewProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const createProductDto: CreateProductDto = req.body;
 
-    const [createdProduct, err] = await productService.createProduct(createProductDto);
+    const [createdProduct, err] = await productService.createProduct(
+      createProductDto
+    );
 
     if (err) {
-      res.send(
-        returnResponse(
-          ERROR_BAD_REQUEST,
-          err.message,
-          createdProduct
-        )
-      );
+      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, createdProduct));
     } else {
       res.send(
         returnResponse(
@@ -404,16 +398,13 @@ const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId: string = req.params.id;
     const updateProductDto: CreateProductDto = req.body;
 
-    const [updatedProduct, err] = await productService.updateProduct(productId, updateProductDto);
+    const [updatedProduct, err] = await productService.updateProduct(
+      productId,
+      updateProductDto
+    );
 
     if (err) {
-      res.send(
-        returnResponse(
-          ERROR_BAD_REQUEST,
-          err.message,
-          updatedProduct
-        )
-      );
+      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, updatedProduct));
     } else {
       res.send(
         returnResponse(
@@ -428,4 +419,10 @@ const updateProduct = async (req: Request, res: Response): Promise<void> => {
     res.status(500).send("Internal Server Error");
   }
 };
-export { getProducts, createNewProduct, findProductById, searchProduct, updateProduct };
+export {
+  getProducts,
+  createNewProduct,
+  findProductById,
+  searchProduct,
+  updateProduct,
+};

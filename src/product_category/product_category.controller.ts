@@ -1,12 +1,12 @@
-// ProductCategoryController.ts
 import { Request, Response } from "express";
 import { productCategoryService } from "./product_category.service";
+import { returnResponse } from "../helper/response";
 import {
-  returnResponse,
+  CODE_CREATED_SUCCESS,
   CODE_SUCCESS,
   ERROR_BAD_REQUEST,
-  CODE_CREATED_SUCCESS,
-} from "../helper/response";
+  ERROR_NOT_FOUND,
+} from "../helper/constant";
 import { CreateProductCategoryDto } from "./dto/create_product_category.dto";
 
 /**
@@ -20,7 +20,10 @@ import { CreateProductCategoryDto } from "./dto/create_product_category.dto";
  *       '400':
  *         description: Failed to retrieve data
  */
-const getProductCategories = async (req: Request, res: Response): Promise<void> => {
+const getProductCategories = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const response = await productCategoryService.getAllProductCategories();
 
@@ -30,7 +33,11 @@ const getProductCategories = async (req: Request, res: Response): Promise<void> 
       );
     } else {
       res.send(
-        returnResponse(CODE_SUCCESS, "Successfully returned the list of categories", response)
+        returnResponse(
+          CODE_SUCCESS,
+          "Successfully returned the list of categories",
+          response
+        )
       );
     }
   } catch (error) {
@@ -65,20 +72,20 @@ const getProductCategories = async (req: Request, res: Response): Promise<void> 
  *       '400':
  *         description: Bad request - Invalid input data
  */
-const createNewProductCategory = async (req: Request, res: Response): Promise<void> => {
+const createNewProductCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const createProductCategoryDto: CreateProductCategoryDto = req.body;
 
-    const [createdProduct, err] = await productCategoryService.createProductCategory(createProductCategoryDto);
+    const [createdProduct, err] =
+      await productCategoryService.createProductCategory(
+        createProductCategoryDto
+      );
 
     if (err) {
-      res.send(
-        returnResponse(
-          ERROR_BAD_REQUEST,
-          err.message,
-          createdProduct
-        )
-      );
+      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, createdProduct));
     } else {
       res.send(
         returnResponse(
@@ -98,7 +105,7 @@ const createNewProductCategory = async (req: Request, res: Response): Promise<vo
  * /v1/product_category/update/{id}:
  *   put:
  *     summary: Update product category
-  *     parameters:
+ *     parameters:
  *       - in: path
  *         name: id
  *         required: true
@@ -127,21 +134,22 @@ const createNewProductCategory = async (req: Request, res: Response): Promise<vo
  *       '400':
  *         description: Bad request - Invalid input data
  */
-const updateProductCategory = async (req: Request, res: Response): Promise<void> => {
+const updateProductCategory = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const productCategoryId: string = req.params.id;
     const updateProductCategoryDto: CreateProductCategoryDto = req.body;
 
-    const [updatedProduct, err] = await productCategoryService.updateProductCategory(productCategoryId, updateProductCategoryDto);
+    const [updatedProduct, err] =
+      await productCategoryService.updateProductCategory(
+        productCategoryId,
+        updateProductCategoryDto
+      );
 
     if (err) {
-      res.send(
-        returnResponse(
-          ERROR_BAD_REQUEST,
-          err.message,
-          updatedProduct
-        )
-      );
+      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, updatedProduct));
     } else {
       res.send(
         returnResponse(
@@ -156,4 +164,8 @@ const updateProductCategory = async (req: Request, res: Response): Promise<void>
     res.status(500).send("Internal Server Error");
   }
 };
-export {createNewProductCategory, getProductCategories, updateProductCategory } ;
+export {
+  createNewProductCategory,
+  getProductCategories,
+  updateProductCategory,
+};

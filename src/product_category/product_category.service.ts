@@ -25,11 +25,9 @@ class ProductCategoryService {
   ): Promise<[ProductCategory | null, Error | null]> {
     const categoryRepository = getRepository(ProductCategory);
     try {
-      const newProductCategory = categoryRepository.create({
-        ...createProductCategoryDto,
-      });
+
       const createdProductCategory = await categoryRepository.save(
-        newProductCategory
+        createProductCategoryDto
       );
 
       return [createdProductCategory, null];

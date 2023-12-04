@@ -1,13 +1,15 @@
-FROM node:16
+FROM node:16-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
 
 RUN npm install
+RUN npm install @elastic/elasticsearch
 
 COPY . .
 
 EXPOSE 8000
 
+# CMD ["npm", "start"]
 CMD ["npm", "run", "dev"]
