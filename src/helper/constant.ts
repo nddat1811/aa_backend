@@ -1,7 +1,7 @@
 //success
 export const CODE_SUCCESS = 200;
 export const CODE_CREATED_SUCCESS = 201;
-
+export const CODE_LOGOUT_SUCCESS = 204; //no content
 //Error
 export const ERROR_BAD_REQUEST = 400;
 export const ERROR_UNAUTHORIZED = 401;

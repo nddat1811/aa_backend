@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import {
   CODE_CREATED_SUCCESS,
+  CODE_LOGOUT_SUCCESS,
   CODE_SUCCESS,
   ERROR_BAD_REQUEST,
   ERROR_CONFLICT,
-
+  ERROR_FORBIDDEN,
 } from "../helper/constant";
 import { returnResponse } from "../helper/response";
 import { userRepository } from "../user/user.repository";
@@ -12,12 +13,13 @@ import * as bcrypt from "bcrypt";
 import { CreateUserDto } from "src/user/dto/create_user.dto";
 import { User } from "../models";
 import jwt, { SignOptions } from "jsonwebtoken";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+import { access } from "fs";
 dotenv.config();
 
 interface JwtPayload {
   email: string;
-  username: string;
+  name: string;
   sub: string;
   role: string;
 }
@@ -78,7 +80,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     const payload: JwtPayload = {
       sub: String(user.id),
       email: user.email ? String(user.email) : "",
-      username: user.name ? String(user.name) : "",
+      name: user.name ? String(user.name) : "",
       role: user.role,
     };
 
@@ -89,6 +91,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
 
     const refreshTokenOptions: SignOptions = {
       expiresIn: "30d",
+      algorithm: "HS512",
     };
 
     let accessToken = jwt.sign(
@@ -98,7 +101,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
     );
     let refreshToken = jwt.sign(
       payload,
-      "2", //process.env.REFRESH_TOKEN_SECRET,
+      process.env.REFRESH_TOKEN_SECRET ?? "456",
       refreshTokenOptions
     );
     // const tokenCache = {
@@ -106,10 +109,13 @@ const login = async (req: Request, res: Response): Promise<void> => {
     //   tokens: [{ accessToken, refreshToken }],
     // };
     const cookiesName: string | undefined = process.env.COOKIES_NAME;
-
     if (accessToken && cookiesName) {
       res.cookie(cookiesName, accessToken);
-      console.log("cookie: ", cookiesName)
+      console.log("cookie: ", cookiesName);
+      res.cookie("jwt", refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
     }
 
     res.send(
@@ -210,11 +216,71 @@ const register = async (req: Request, res: Response): Promise<void> => {
       );
       return;
     }
-    res.send("Ok");
   } catch (error) {
     console.error("Error while processing User:", error);
     res.status(500).send("Internal Server Error");
   }
 };
 
-export { login, register };
+const handleRefreshToken = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const refreshToken = req.cookies["jwt"];
+    if (!refreshToken) {
+      res.send(returnResponse(ERROR_FORBIDDEN, "Invalid refresh token", null));
+      return;
+    }
+
+    const decode = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET ?? "456",
+    ) as JwtPayload;
+
+    if (!decode){
+      res.send(returnResponse(ERROR_FORBIDDEN, 'Invalid refresh token', null));
+      return;
+    }
+
+    const payload: JwtPayload = {
+      sub: String(decode.sub),
+      email: decode.email ? String(decode.email) : "",
+      name: decode.name ? String(decode.name) : "",
+      role: decode.role,
+    };
+
+    const accessTokenOptions: SignOptions & { algorithm: "HS512" } = {
+      expiresIn: "1d",
+      algorithm: "HS512",
+    };
+
+    let accessToken = jwt.sign(
+      payload,
+      process.env.JWT_SECRET ?? "123",
+      accessTokenOptions
+    );
+    res.send(returnResponse(CODE_SUCCESS, "Access token refreshed successfully", accessToken));
+
+  } catch (error) {
+    console.error("Error while processing User:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+
+const logout = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const refreshToken = req.cookies["jwt"];
+    if (!refreshToken) {
+      res.send(returnResponse(ERROR_FORBIDDEN, "Invalid refresh token", null));
+      return;
+    }
+
+    res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: process.env.NODE_ENV === 'production' });
+    res.send(returnResponse(CODE_LOGOUT_SUCCESS, "Logout successfully", null));
+
+  } catch (error) {
+    console.error("Error while processing User:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export { login, register, handleRefreshToken, logout };
