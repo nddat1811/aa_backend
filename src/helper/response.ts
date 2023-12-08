@@ -1,10 +1,3 @@
-export const CODE_SUCCESS = 200;
-export const CODE_CREATED_SUCCESS = 201;
-
-export const ERROR_BAD_REQUEST = 400;
-export const ERROR_NOT_FOUND = 404
-export const CodeErrorInvalidEmailPassword = 102;
-
 interface MyResponse<T> {
   Code: number;
   Message: string;

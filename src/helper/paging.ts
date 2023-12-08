@@ -1,6 +1,4 @@
-
-// constants.ts
-const PAGE_SIZE_DEFAULT = 10;
+import { PAGE_SIZE_DEFAULT } from "./constant";
 
 // utils.ts
 function getPageSize(pageSize: number): number {
@@ -10,7 +8,10 @@ function getPageSize(pageSize: number): number {
   return pageSize;
 }
 
-export function calcPagination(page: number, pageSize: number): { limit: number; offset: number } {
+export function calcPagination(
+  page: number,
+  pageSize: number
+): { limit: number; offset: number } {
   const limit = getPageSize(pageSize);
   const offset = (page - 1) * limit;
 

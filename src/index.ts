@@ -5,10 +5,28 @@ import morgan from "morgan";
 import Router from "./routes";
 import swaggerDocs from "./utils/swagger";
 import { DatabaseSingleton, connectToDatabase } from "./config/database";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 
 const PORT = 8000;
 
 const app: Express = express();
+
+const corsOptions: cors.CorsOptions = {
+  origin: [
+    "https://www.yoursite.com",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000",
+    "http://localhost:9200"
+  ], // Replace with the origin(s) of your client application
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+  credentials: true, // Allow credentials (cookies, authorization headers, etc.)
+  optionsSuccessStatus: 204, // Respond with a 204 for preflight requests
+};
+
+app.use(cors(corsOptions));
+
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(morgan("tiny"));

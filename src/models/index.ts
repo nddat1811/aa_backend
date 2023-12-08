@@ -10,7 +10,7 @@ import { ProductReview } from "./product_review";
 import { Product } from "../product/entity/product";
 import { Transaction } from "./transaction";
 import { UserPayment } from "./user_payment";
-import { User } from "./user";
+import { User } from "../user/entity/user";
 
 export {
   ProductCategory,

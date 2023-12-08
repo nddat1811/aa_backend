@@ -13,7 +13,7 @@ import {
   Address,
   Transaction,
   OrderDetail,
-} from "./index";
+} from "../../models/index";
 @Entity({name: "users"})
 export class User {
   @PrimaryGeneratedColumn()
@@ -35,6 +35,9 @@ export class User {
 
   @Column()
   email?: string;
+
+  @Column()
+  avatar?: string;
 
   @Column({
     name: "dob",
