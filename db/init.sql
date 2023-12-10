@@ -80,6 +80,7 @@ CREATE TABLE `users` (
   `email` VARCHAR(255) NOT NULL,
   `avatar` VARCHAR(255),
   `dob` TIMESTAMP,
+  `gender` VARCHAR(255),
   `last_login` TIMESTAMP,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -232,14 +233,14 @@ VALUES
 (2, 2, NULL, 'Tôi rất hài lòng với sản phẩm này.', 10, NULL);
 
 -- password 1234
-INSERT INTO `users` (`id`, `role`, `name`, `password`, `phone`, `email`, `dob`, `last_login`)
+INSERT INTO `users` (`id`, `role`, `name`, `password`, `phone`, `email`, `dob`, `gender`, `last_login`)
 VALUES
-(1, "ADMIN", 'Adam', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '0779455498', 'nddat1811@example.com', '1990-05-15  00:00:00', '2023-11-20 08:30:00'),
-(2, "USER", 'Đạt', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '0822000369', 'test', '1988-09-22 00:00:00', '2023-11-21 09:45:00'),
-(3, "USER", 'Tô An', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '555123456', 'alice@example.com', '1995-12-10  00:00:00', '2023-11-21 14:20:00'),
-(4, "USER", 'Bob Brown', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '111222333', 'bob@example.com', '1992-07-03  00:00:00', '2023-11-22 10:15:00'),
-(5, "USER", 'Eva Garcia', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '999888777', 'eva@example.com', '1985-03-28  00:00:00', '2023-11-22 12:30:00'),
-(6, "USER", 'David Lee', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '333444555', 'david@example.com', '1998-10-17  00:00:00', '2023-11-23 11:00:00');
+(1, "ADMIN", 'Adam', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '0779455498', 'nddat1811@example.com', '1990-05-15  00:00:00', 'NAM', '2023-11-20 08:30:00'),
+(2, "USER", 'Đạt', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '0822000369', 'test', '1988-09-22 00:00:00', 'NAM', '2023-11-21 09:45:00'),
+(3, "USER", 'Tô An', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '555123456', 'alice@example.com', '1995-12-10  00:00:00', 'NAM', '2023-11-21 14:20:00'),
+(4, "USER", 'Bob Brown', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '111222333', 'bob@example.com', '1992-07-03  00:00:00', 'NAM', '2023-11-22 10:15:00'),
+(5, "USER", 'Eva Garcia', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '999888777', 'eva@example.com', '1985-03-28  00:00:00', 'NAM', '2023-11-22 12:30:00'),
+(6, "USER", 'David Lee', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '333444555', 'david@example.com', '1998-10-17  00:00:00', 'NAM', '2023-11-23 11:00:00');
 
 INSERT INTO `addresses` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
 VALUES

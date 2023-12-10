@@ -44,7 +44,7 @@ export class DatabaseSingleton {
           OrderDetail,
           OrderItem,
         ],
-        // logging: true,
+        logging: true,
         synchronize: false, // dòng bug qq má m
       };
 

@@ -1,4 +1,4 @@
-import { Address } from "./address";
+import { Address } from "../address/entity/address";
 import { Cart } from "./cart";
 import { CartItem } from "./cart_item";
 import { OrderItem } from "./oder_item";

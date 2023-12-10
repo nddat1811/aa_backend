@@ -10,16 +10,13 @@ export const isAuthenticated = async (
   res: express.Response,
   next: express.NextFunction
 ) => {
-  const authHeader = req.headers["authorization"];
+  const authHeader = req.headers["authorization"]; //Bearer authorization
   if (!authHeader) {
     return res.send(returnResponse(ERROR_UNAUTHORIZED, "Unauthorized", null));
   }
-  console.log("a", authHeader)
   const token = authHeader.split(" ")[1];
-  console.log(token)
   jwt.verify(token, process.env.JWT_SECRET ?? "123", (err, decoded) => {
     if (err) {
-      console.log("err: ", err)
       return res.send(returnResponse(ERROR_FORBIDDEN, "Invalid token", null));
     }
     next();
