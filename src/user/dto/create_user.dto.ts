@@ -15,10 +15,10 @@ export class CreateUserDto {
   email!: string;
 
   @IsOptional()
-  @IsString()
-  avatar?: string;
-  
-  @IsOptional()
   @IsDate()
   dob?: Date;
+
+  @IsOptional()
+  @IsDate()
+  gender?: string;
 }

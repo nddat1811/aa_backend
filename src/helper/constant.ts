@@ -19,3 +19,11 @@ export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
 }
+
+
+//role
+export enum UserGender {
+  MALE = "NAM",
+  FEMALE = "NỮ",
+  DIFF = ""
+}

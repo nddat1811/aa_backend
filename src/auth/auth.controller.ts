@@ -10,11 +10,12 @@ import {
 import { returnResponse } from "../helper/response";
 import { userRepository } from "../user/user.repository";
 import * as bcrypt from "bcrypt";
-import { CreateUserDto } from "src/user/dto/create_user.dto";
+import { CreateUserDto } from "../user/dto/create_user.dto";
 import { User } from "../models";
 import jwt, { SignOptions } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { access } from "fs";
+import { hashPassword } from "../helper/hashPassword";
 dotenv.config();
 
 interface JwtPayload {
@@ -161,15 +162,15 @@ const login = async (req: Request, res: Response): Promise<void> => {
  *                 type: string
  *                 description: The user's email.
  *                 default: test@gmail.com
- *               avatar:
+ *               gender:
  *                 type: string
- *                 description: The user's avatar.
- *                 nullable: true
+ *                 description: The user's gender.
+ *                 default: NAM
  *               dob:
  *                 type: string
  *                 format: date
- *                 description: The user's warranty.
- *                 default: '2024-12-01'  # Added single quotes to keep it as a string
+ *                 description: The user's date.
+ *                 default: '2024-12-03T00:00:00.000Z'  # Added single quotes to keep it as a string
  *     responses:
  *       '200':
  *         description: Successfully registered
@@ -196,9 +197,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     //hash password
-    const saltRounds = 10;
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const hashedPassword = bcrypt.hashSync(createUser.password, salt);
+    const hashedPassword = hashPassword(createUser.password)
     createUser.password = hashedPassword;
 
     const [createdUser, err] = await userRepository.createNewUser(createUser);
