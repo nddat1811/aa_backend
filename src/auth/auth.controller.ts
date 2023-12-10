@@ -119,6 +119,13 @@ const login = async (req: Request, res: Response): Promise<void> => {
       });
     }
 
+    const t = await userRepository.updateLastLogin(user.id);
+    if(t) {
+      res.send(
+        returnResponse(ERROR_BAD_REQUEST, "Error update last login", null)
+      );
+      return;
+    }
     res.send(
       returnResponse(CODE_SUCCESS, "Login success", {
         id: user.id,
@@ -197,7 +204,7 @@ const register = async (req: Request, res: Response): Promise<void> => {
       return;
     }
     //hash password
-    const hashedPassword = hashPassword(createUser.password)
+    const hashedPassword = hashPassword(createUser.password);
     createUser.password = hashedPassword;
 
     const [createdUser, err] = await userRepository.createNewUser(createUser);
@@ -221,7 +228,10 @@ const register = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-const handleRefreshToken = async (req: Request, res: Response): Promise<void> => {
+const handleRefreshToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const refreshToken = req.cookies["jwt"];
     if (!refreshToken) {
@@ -230,12 +240,12 @@ const handleRefreshToken = async (req: Request, res: Response): Promise<void> =>
     }
 
     const decode = jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET ?? "456",
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET ?? "456"
     ) as JwtPayload;
 
-    if (!decode){
-      res.send(returnResponse(ERROR_FORBIDDEN, 'Invalid refresh token', null));
+    if (!decode) {
+      res.send(returnResponse(ERROR_FORBIDDEN, "Invalid refresh token", null));
       return;
     }
 
@@ -256,14 +266,18 @@ const handleRefreshToken = async (req: Request, res: Response): Promise<void> =>
       process.env.JWT_SECRET ?? "123",
       accessTokenOptions
     );
-    res.send(returnResponse(CODE_SUCCESS, "Access token refreshed successfully", accessToken));
-
+    res.send(
+      returnResponse(
+        CODE_SUCCESS,
+        "Access token refreshed successfully",
+        accessToken
+      )
+    );
   } catch (error) {
     console.error("Error while processing User:", error);
     res.status(500).send("Internal Server Error");
   }
 };
-
 
 const logout = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -273,9 +287,25 @@ const logout = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'none', secure: process.env.NODE_ENV === 'production' });
-    res.send(returnResponse(CODE_LOGOUT_SUCCESS, "Logout successfully", null));
+    const decode = jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET ?? "456"
+    ) as JwtPayload;
 
+    const t = await userRepository.updateLastLogin(+decode.sub);
+    if(t) {
+      res.send(
+        returnResponse(ERROR_BAD_REQUEST, "Error update last login", null)
+      );
+      return;
+    }
+
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      sameSite: "none",
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.send(returnResponse(CODE_LOGOUT_SUCCESS, "Logout successfully", null));
   } catch (error) {
     console.error("Error while processing User:", error);
     res.status(500).send("Internal Server Error");

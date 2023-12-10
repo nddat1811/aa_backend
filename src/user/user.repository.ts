@@ -7,6 +7,22 @@ import { UserRole } from "../helper/constant";
 import { UpdateUserDto } from "./dto/update_user.dto";
 
 class UserRepository {
+  async updateLastLogin(id: number): Promise<string | null> {
+    const userRepository = getRepository(User);
+
+    try {
+      const result = await userRepository.update(id, { lastLogin: new Date() });
+
+      if (result.affected === 0) {
+        return "User not found";
+      }
+      return null;
+    } catch (error) {
+      console.error("Error updating last login", error);
+      throw error;
+    }
+  }
+
   async findUserByEmail(emailInput: string): Promise<User | null> {
     const userRepository = getRepository(User);
     try {
