@@ -56,13 +56,14 @@ class UserRepository {
     }
   }
 
-  async getDetailUserById(id: number): Promise<User | null> {
+  async  getDetailUserById(
+    id: number,
+    flag: boolean
+  ): Promise<User | null> {
     const userRepository = getRepository(User);
     try {
-      const user = await userRepository
+      const queryBuilder = userRepository
         .createQueryBuilder("user")
-        .leftJoinAndSelect("user.userPayments", "payment")
-        .leftJoinAndSelect("user.userAddresses", "address")
         .select([
           "user.id",
           "user.role",
@@ -76,9 +77,15 @@ class UserRepository {
           "user.lastLogin",
           "user.createdAt",
           "user.updatedAt",
-          "payment",
-          "address",
-        ])
+        ]);
+
+      if (flag) {
+        queryBuilder
+          .leftJoinAndSelect("user.userPayments", "payment")
+          .leftJoinAndSelect("user.userAddresses", "address")
+      }
+
+      const user = await queryBuilder
         .where({
           id: id,
         })

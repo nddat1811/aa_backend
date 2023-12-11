@@ -10,7 +10,7 @@ class UserService {
   async getUserDetailById(userId: string): Promise<User | null> {
     try {
       const id = +userId;
-      const user = userRepository.getDetailUserById(id);
+      const user = userRepository.getDetailUserById(id, true); // flag true --> query thêm payment và address
       return user;
     } catch (error) {
       console.error("Error while finding user by ID:", error);
