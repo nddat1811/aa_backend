@@ -1,13 +1,13 @@
 import { IsString, IsOptional, IsDate, IsNotEmpty, IsArray, ArrayMinSize, ValidateNested, IsBoolean } from 'class-validator';
 
-class AddressDto {
+class CreateAddressDto {
   @IsString()
   @IsNotEmpty()
-  street: string;
+  street?: string;
 
   @IsString()
   @IsNotEmpty()
-  city: string;
+  city?: string;
 
   @IsString()
   @IsNotEmpty()
@@ -17,3 +17,5 @@ class AddressDto {
   @IsBoolean()
   isDefault?: boolean;
 }
+
+export default CreateAddressDto;
