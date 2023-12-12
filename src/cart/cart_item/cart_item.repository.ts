@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 import { CartItem } from "../../models";
 
 class CartItemRepository {
@@ -42,10 +42,9 @@ class CartItemRepository {
     const cartItemRepository = getRepository(CartItem);
 
     try {
-
       const newCartItem = cartItemRepository.create({
         cart: { id: cartId },
-        product: {id: productId},
+        product: { id: productId },
         price: price,
         quantity: quantity,
       });
@@ -59,9 +58,7 @@ class CartItemRepository {
     }
   }
 
-  async updateCartItem(
-    updateCartItem: CartItem
-  ) : Promise<CartItem | null> {
+  async updateCartItem(updateCartItem: CartItem): Promise<CartItem | null> {
     const userRepository = getRepository(CartItem);
     try {
       const updatedCartItem = await userRepository.save(updateCartItem);
@@ -71,7 +68,64 @@ class CartItemRepository {
       console.error("Error creating user", error);
       throw error;
     }
-    return null;
+  }
+  async deleteCartItem(
+    productId: number,
+    userId: number
+  ): Promise<CartItem | null> {
+    const cartItemRepository = getRepository(CartItem);
+
+    try {
+      const queryBuilder = cartItemRepository
+        .createQueryBuilder("cart_item")
+        .leftJoin("cart_item.product", "product")
+        .leftJoin("cart_item.cart", "cart")
+        .select(["cart_item", "cart.user", "product"])
+        .where(
+          `product.id = (:productId)
+         AND cart.user = (:userId)`,
+          {
+            productId: productId,
+            userId: userId,
+          }
+        );
+      const cartItem = await queryBuilder.getOne();
+      if (!cartItem) {
+        return null; // Không tìm thấy sản phẩm trong giỏ hàng
+      }
+
+      const entityManager = getManager();
+      await entityManager.delete(CartItem, cartItem.id);
+
+      return cartItem;
+    } catch (error) {
+      console.error("Error updating last login", error);
+      throw error;
+    }
+  }
+  async getListItemInCart(userId: number): Promise<Array<CartItem> | null> {
+    const cartItemRepository = getRepository(CartItem);
+
+    try {
+      const queryBuilder = cartItemRepository
+        .createQueryBuilder("cart_item")
+        .leftJoin("cart_item.product", "product")
+        .leftJoin("cart_item.cart", "cart")
+        .select(["cart_item", "cart.user", "product"])
+        .where(`cart.user = (:userId)`, {
+          userId: userId,
+        });
+      const cartItem = await queryBuilder.getMany();
+
+      if (cartItem.length == 0) {
+        return null; // Không tìm thấy sản phẩm trong giỏ hàng
+      }
+
+      return cartItem;
+    } catch (error) {
+      console.error("Error updating last login", error);
+      throw error;
+    }
   }
 }
 
