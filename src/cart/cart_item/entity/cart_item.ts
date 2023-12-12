@@ -5,7 +5,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from "typeorm";
-import { Product, Cart } from "./index";
+import { Product, Cart } from "../../../models/index";
 
 @Entity({name: "cart_items"})
 export class CartItem {
@@ -13,10 +13,10 @@ export class CartItem {
   id!: number;
 
   @Column()
-  quantity?: number;
+  quantity!: number;
 
-  @Column()
-  price?: number;
+  @Column("double")
+  price!: number;
 
   @Column({ name: "created_at" })
   createdAt?: Date;

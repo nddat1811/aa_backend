@@ -1,6 +1,6 @@
 import { Address } from "../address/entity/address";
-import { Cart } from "./cart";
-import { CartItem } from "./cart_item";
+import { Cart } from "../cart/entity/cart";
+import { CartItem } from "../cart/cart_item/entity/cart_item";
 import { OrderItem } from "./oder_item";
 import { OrderDetail } from "./order_detail";
 import { ProductCategory } from "../product_category/entity/product_category";

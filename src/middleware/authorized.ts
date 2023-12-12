@@ -15,10 +15,12 @@ export const isAuthenticated = async (
     return res.send(returnResponse(ERROR_UNAUTHORIZED, "Unauthorized", null));
   }
   const token = authHeader.split(" ")[1];
-  jwt.verify(token, process.env.JWT_SECRET ?? "123", (err, decoded) => {
-    if (err) {
-      return res.send(returnResponse(ERROR_FORBIDDEN, "Invalid token", null));
-    }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET ?? "123") as JwtPayload;
+    //@ts-ignore
+    req.userId = decoded.sub;
     next();
-  }) as JwtPayload | undefined;
+  } catch (err) {
+    return res.send(returnResponse(ERROR_FORBIDDEN, "Invalid token", null));
+  }
 };

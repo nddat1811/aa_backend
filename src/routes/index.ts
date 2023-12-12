@@ -4,6 +4,7 @@ import ProductRouter from "../product/product.router";
 import AuthRouter from "../auth/auth.router";
 import UserRouter from "../user/user.router";
 import AddressRoute from "../address/address.router"
+import CartItemRoute from "../cart/cart_item/car_item.router"
 
 const router = express.Router();
 
@@ -12,5 +13,6 @@ router.use("/v1/product", ProductRouter);
 router.use("/v1/auth", AuthRouter);
 router.use("/v1/user", UserRouter);
 router.use("/v1/address", AddressRoute);
+router.use("/v1/cart_item", CartItemRoute);
 
 export default router;

@@ -46,7 +46,6 @@ class UserRepository {
         ...userInput,
         role: UserRole.USER,
       });
-      console.log(newUser);
       const createdUser = await userRepository.save(newUser);
 
       return [createdUser, null];
