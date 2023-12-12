@@ -40,7 +40,7 @@ export class Product {
   material?: string;
 
   @Column()
-  size?: string;
+  size!: string;
 
   @Column()
   warranty?: string;
@@ -48,8 +48,8 @@ export class Product {
   @Column()
   description?: string;
 
-  @Column()
-  price?: number;
+  @Column("double")
+  price!: number;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;

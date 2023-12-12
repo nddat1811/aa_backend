@@ -215,9 +215,9 @@ const updateAddress = async (
  * @openapi
  * /v1/address/set_default/{userID}/{addressID}:
  *   put:
- *     summary: Update address
+ *     summary: set default address
  *     parameters:
- *       - in: path
+ *       - in: path 
  *         name: userID
  *         required: true
  *         description: ID of the user's address

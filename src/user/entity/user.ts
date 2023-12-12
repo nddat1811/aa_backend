@@ -59,9 +59,6 @@ export class User {
   @OneToMany(() => Address, (userAddresses) => userAddresses.user)
   userAddresses?: Address[];
 
-  @OneToMany(() => Cart, (userCarts) => userCarts.user)
-  userCarts?: Cart[];
-
   @OneToMany(() => ProductReview, (productReviews) => productReviews.user)
   productReviews?: ProductReview[];
 

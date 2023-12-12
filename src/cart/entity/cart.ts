@@ -5,15 +5,16 @@ import {
   ManyToOne,
   JoinColumn,
   OneToMany,
+  OneToOne,
 } from "typeorm";
-import { User, CartItem } from "./index";
+import { User, CartItem } from "../../models/index";
 
 @Entity({name: "carts"})
 export class Cart {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => User, (user) => user.userCarts)
+  @OneToOne(() => User)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",

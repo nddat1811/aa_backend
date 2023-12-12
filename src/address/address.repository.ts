@@ -6,25 +6,6 @@ import CreateAddressDto from "./dto/create_address.dto";
 import { userRepository } from "../user/user.repository";
 
 class AddressRepository {
-  //   async createNewUser(
-  //     userInput: CreateUserDto
-  //   ): Promise<[User | null, Error | null]> {
-  //     const userRepository = getRepository(User);
-  //     try {
-  //       const newUser = userRepository.create({
-  //         ...userInput,
-  //         role: UserRole.USER,
-  //       });
-  //       console.log(newUser);
-  //       const createdUser = await userRepository.save(newUser);
-
-  //       return [createdUser, null];
-  //     } catch (error) {
-  //       console.error("Error creating user", error);
-  //       throw error;
-  //     }
-  //   }
-
   async getListAddress(id: number): Promise<Array<Address> | null> {
     const addressRepository = getRepository(Address);
     try {
