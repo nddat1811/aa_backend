@@ -88,13 +88,27 @@ class AddressService {
 
       const dataAddress = { ...existingAddress, ...restUpdateAddressDto };
 
-      const [updatedAddress, error] = await addressRepository.updateAddress(
-        dataAddress
+      const entityManager: EntityManager = getManager();
+
+      const [result, error] = await entityManager.transaction(
+        async (transactionalEntityManager) => {
+          const [existingAddress, err] =
+            await addressRepository.checkExistAddress(userId, dataAddress);
+
+          if (existingAddress) {
+            // Address with similar details already exists, return an error
+            return [null, Error("Address already exists")];
+          }
+
+          const [updatedAddress, error] = await addressRepository.updateAddress(
+            dataAddress
+          );
+          // Transaction tự động commit nếu không có lỗi
+          return [updatedAddress, error];
+        }
       );
-      if (error) {
-        return [null, error];
-      }
-      return [updatedAddress, null];
+
+      return [result, error];
     } catch (error) {
       console.error("Error updating product", error);
       throw error;

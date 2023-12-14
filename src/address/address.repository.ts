@@ -14,6 +14,7 @@ class AddressRepository {
         .leftJoin("address.user", "user")
         .select(["address", "user.id", "user.name"])
         .where("user.id = :userId", { userId: id })
+        .orderBy("address.isDefault", "DESC")
         .getMany();
 
       return listAddress;
