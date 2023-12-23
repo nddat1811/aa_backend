@@ -10,37 +10,7 @@ import { CreateOrderDto } from "./dto/create_product.dto";
 import { orderDetailService } from "./order.service";
 import { userRepository } from "../user/user.repository";
 
-/**
-   * @openapi
-   * /v1/cart_item/update_cart:
-   *   put:
-   *     summary: Update cartItem in cart
-   *     requestBody:
-   *       required: true
-   *       content:
-   *         application/json:
-   *           schema:
-   *             type: object
-   *             properties:
-   *               productId:
-   *                 type: number
-   *                 description: The product code.
-   *                 default: 1
-   *               size:
-   *                 type: string
-   *                 description: The product name.
-   *                 default: "Free size"
-   *               quantity:
-   *                 type: number
-   *                 description: The product name.
-   *                 default: 1
 
-   *     responses:
-   *       '200':
-   *         description: Update Item in cart has been successfully returned
-   *       '400':
-   *         description: Error
-   */
 const creatNewOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     //@ts-ignore
@@ -58,6 +28,17 @@ const creatNewOrder = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+/**
+ * @openapi
+ * /v1/order/list:
+ *   get:
+ *     summary: Get list order of current user
+ *     responses:
+ *       '200':
+ *         description: Get list order successfully
+ *       '400':
+ *         description: Can't get list order.
+ */
 const getListOrderUser = async (req: Request, res: Response): Promise<void> => {
   try {
     //@ts-ignore
@@ -73,6 +54,21 @@ const getListOrderUser = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+/**
+ * @swagger
+ * /v1/order/detail/{id}:
+ *   get:
+ *     summary: Get order detail by ID
+ *     description: Retrieve a product based on its ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the product to retrieve
+ *         schema:
+ *           type: string
+ *           default: 1
+ */
 const getOrderDetailById = async (
   req: Request,
   res: Response
@@ -90,6 +86,31 @@ const getOrderDetailById = async (
   }
 };
 
+/**
+ * @openapi
+ * /v1/order/update/{id}:
+ *   put:
+ *     summary: Update product
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the product to retrieve
+ *         schema:
+ *           type: string
+ *           default: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: The product code.
+ *                 default: "Vận chuyển"
+ */
 const updateOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     //@ts-ignore
