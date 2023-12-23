@@ -11,7 +11,11 @@ class CreateAddressDto {
 
   @IsString()
   @IsNotEmpty()
-  postalCode?: string;
+  name?: string;
+
+  @IsString()
+  @IsNotEmpty()
+  phone?: string;
 
   @IsOptional()
   @IsBoolean()

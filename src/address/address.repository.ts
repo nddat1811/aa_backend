@@ -81,7 +81,8 @@ class AddressRepository {
           user: { id: user.id }, // Use the user id instead of the user object
           street: address.street,
           city: address.city,
-          postalCode: address.postalCode,
+          name: address.name,
+          phone: address.phone,
         },
       });
 

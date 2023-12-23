@@ -97,19 +97,6 @@ CREATE TABLE `user_payments` (
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-DROP TABLE IF EXISTS `transactions`;
-CREATE TABLE `transactions` (
-  `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `user_id` INT,
-  `order_detail_id` INT,
-  `type` SMALLINT NOT NULL,
-  `mode` SMALLINT NOT NULL,
-  `status` SMALLINT NOT NULL,
-  `content` TEXT,
-  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `carts`;
 CREATE TABLE `carts` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
@@ -130,9 +117,13 @@ CREATE TABLE `cart_items` (
 DROP TABLE IF EXISTS `order_details`;
 CREATE TABLE `order_details` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
-  `order_id` INT,
   `user_id` INT,
-  `total` INT,
+  `address_id` INT,
+  `total` FLOAT,
+  `ship_method` VARCHAR(255),
+  `mode_pay` VARCHAR(255),
+  `status` VARCHAR(255),
+  `note` VARCHAR(255),
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -140,9 +131,12 @@ CREATE TABLE `order_details` (
 DROP TABLE IF EXISTS `order_items`;
 CREATE TABLE `order_items` (
   `id` INT PRIMARY KEY AUTO_INCREMENT,
+  `product_id` INT,
+  `order_id` INT,
+  `quantity` INT,
+  `price` FLOAT,
   `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `product_id` INT
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `addresses`;
@@ -151,7 +145,8 @@ CREATE TABLE `addresses` (
   `user_id` INT,
   `street` VARCHAR(255),
   `city` VARCHAR(255),
-  `postal_code` VARCHAR(20),
+  `name` VARCHAR(255),
+  `phone` VARCHAR(255),
   `is_default` BOOLEAN
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -168,17 +163,17 @@ ADD FOREIGN KEY (`parent_review`) REFERENCES `product_reviews`(`id`);
 ALTER TABLE `user_payments`
 ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
 
-ALTER TABLE `transactions`
-ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
-ADD FOREIGN KEY (`order_detail_id`) REFERENCES `order_details`(`id`);
-
 ALTER TABLE `cart_items`
 ADD FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
 ADD FOREIGN KEY (`cart_id`) REFERENCES `carts`(`id`);
 
+ALTER TABLE `order_items`
+ADD FOREIGN KEY (`product_id`) REFERENCES `products`(`id`),
+ADD FOREIGN KEY (`order_id`) REFERENCES `order_details`(`id`);
+
 ALTER TABLE `order_details`
-ADD FOREIGN KEY (`order_id`) REFERENCES `order_items`(`id`),
-ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
+ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+ADD FOREIGN KEY (`address_id`) REFERENCES `addresses`(`id`);
 
 ALTER TABLE `addresses`
 ADD FOREIGN KEY (`user_id`) REFERENCES `users`(`id`);
@@ -242,14 +237,14 @@ VALUES
 (5, "USER", 'Eva Garcia', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '999888777', 'eva@example.com', '1985-03-28  00:00:00', 'NAM', '2023-11-22 12:30:00'),
 (6, "USER", 'David Lee', '$2b$10$dSXhNmu7eYFoWL8R2wOga.cR6sTK6NdYfd5lBvWkWvVo6uqAlj70a', '333444555', 'david@example.com', '1998-10-17  00:00:00', 'NAM', '2023-11-23 11:00:00');
 
-INSERT INTO `addresses` (`id`, `user_id`, `street`, `city`, `postal_code`, `is_default`)
+INSERT INTO `addresses` (`id`, `user_id`, `street`, `city`, `name`, `phone`, `is_default`)
 VALUES
-(1, 1, '135 Trần Hưng Đạo Name', 'HCM City', '12345', 1),
-(2, 2, '117 Trần Hưng Đạo', 'Quảng Trị', '67890', 1),
-(3, 3, '111 HCM', 'HCM', '13579', 1),
-(4, 4, '012 Street Name', 'City D', '24680', 1),
-(5, 5, '345 Street Name', 'City E', '98765', 1),
-(6, 6, '678 Street Name', 'City F', '54321', 1);
+(1, 1, '135 Trần Hưng Đạo Name', 'HCM City', 'Đạt Nguyễn', '099133117', 1),
+(2, 2, '117 Trần Hưng Đạo', 'Quảng Trị', 'test', '099133117', 1),
+(3, 3, '111 HCM', 'HCM', 'Tô An', '099133117', 1),
+(4, 4, '012 Street Name', 'City D', 'Bob', '099133117', 1),
+(5, 5, '345 Street Name', 'City E', 'Eva', '099133117', 1),
+(6, 6, '678 Street Name', 'City F', 'David', '099133117', 1);
 
 INSERT INTO `user_payments` (`id`, `user_id`, `payment_type`, `provider`, `account_no`, `expiry`, `is_default`)
 VALUES
@@ -258,16 +253,16 @@ VALUES
 (3, 2, 'Credit Card', 'Visa', '222222222', '2024-11-01', 0),
 (4, 2, 'PayPal', 'PayPal', '119876543210', '2023-11-30', 1);
 
-INSERT INTO `order_items` (`id`, `product_id` )
-VALUES
-(1, 1),
-(2, 12);
+-- INSERT INTO `order_items` (`id`, `product_id` )
+-- VALUES
+-- (1, 1),
+-- (2, 12);
 
-INSERT INTO `order_details` (`id`, `order_id`, `user_id`, `total`)
-VALUES
-(1, 1, 1, 103.94),
-(2, 2, 2, 199.95),
-(3, 3, 3, 679.94);
+-- INSERT INTO `order_details` (`id`, `order_id`, `user_id`, `total`)
+-- VALUES
+-- (1, 1, 1, 103.94),
+-- (2, 2, 2, 199.95),
+-- (3, 3, 3, 679.94);
 
 INSERT INTO `carts` (`id`, `user_id`)
 VALUES
@@ -279,10 +274,3 @@ INSERT INTO `cart_items` (`id`, `product_id`, `cart_id`, `quantity`, `price`)
 VALUES
 (1, 1, 1, 1, 25.99),
 (12, 12, 3, 2, 30);
-
-
-INSERT INTO `transactions` ( `user_id`, `order_detail_id`, `type`, `mode`, `status`, `content`)
-VALUES
-  (1, 1, 1, 1, 1, 'Transaction 1 content'),
-  (2, 2, 2, 2, 2, 'Transaction 2 content'),
-  (3, 3, 3, 3, 3, 'Transaction 3 content');

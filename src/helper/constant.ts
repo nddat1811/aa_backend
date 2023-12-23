@@ -27,3 +27,12 @@ export enum UserGender {
   FEMALE = "NỮ",
   DIFF = ""
 }
+//status
+export enum OrderStatus {
+  WAIT_PAYMENT = "Chờ thanh toán",
+  WAIT_DELIVER = "Chờ vận chuyển",
+  DELIVER = "Vận chuyển",
+  FINISHED = "Hoàn thành",
+  CANCELED = "Đã hủy",
+  REFUND = "Trả hàng/hoàn tiền"
+}

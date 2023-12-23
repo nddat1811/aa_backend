@@ -210,7 +210,7 @@ const findProductById = async (req: Request, res: Response): Promise<void> => {
   try {
     const productId: string = req.params.id; // Assuming the ID is a string, adjust accordingly
 
-    const foundProduct = await productService.findProductById(productId);
+    const foundProduct = await productService.findProductById(+productId);
 
     if (!foundProduct) {
       res.send(returnResponse(ERROR_NOT_FOUND, "Product not found", null));

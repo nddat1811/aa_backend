@@ -52,6 +52,7 @@ class ProductService {
           "product.updatedAt",
           "product.deletedAt",
           "inventory.quantity",
+          "inventory.id",
           "category.name",
           "cartItems",
           "orderItems",
@@ -61,7 +62,8 @@ class ProductService {
 
       // query all Products to mapping to elasticsearch
       const allProducts = await queryBuilder.getMany();
-
+        //@ts-ignore
+      // console.log(product.inventory);
       const bulkRequestBody = allProducts.flatMap((product) => [
         { index: { _index: indexName, _id: product.id } },
         {
@@ -77,7 +79,7 @@ class ProductService {
           description: product.description,
           price: product.price,
           category: product.category?.name,
-          inventory: product.inventory?.quantity,
+          inventory: product.inventory,
           createdAt: product.createdAt,
           updatedAt: product.updatedAt,
           deletedAt: product.deletedAt,
@@ -173,7 +175,7 @@ class ProductService {
           description: createdProduct.description,
           price: createdProduct.price,
           category: createdProduct.category?.name,
-          inventory: createdProduct.inventory?.quantity,
+          inventory: createdProduct.inventory,
           createdAt: createdProduct.createdAt,
           updatedAt: createdProduct.updatedAt,
           deletedAt: createdProduct.deletedAt,
@@ -187,7 +189,7 @@ class ProductService {
     }
   }
 
-  async findProductById(productId: string): Promise<Product | null> {
+  async findProductById(productId: number): Promise<Product | null> {
     try {
       const id = +productId;
 
@@ -239,6 +241,43 @@ class ProductService {
 
       // console.log(foundProduct);
       // return foundProduct || null; // Return null if the product is not found
+    } catch (error) {
+      console.error("Error while finding product by ID:", error);
+      throw error; // You might want to handle this error more gracefully in a production environment
+    }
+  }
+  async findProductByIdToUpdate(productId: number): Promise<Product | null> {
+    try {
+      const productRepository = getRepository(Product);
+      const foundProduct = await productRepository
+        .createQueryBuilder("product")
+        .leftJoin("product.category", "category")
+        .leftJoin("product.inventory", "inventory")
+        // .leftJoinAndSelect("product.productReviews", "productReviews")
+        // .leftJoinAndSelect("product.discount", "discount")
+        .select([
+          "product.id",
+          "product.code",
+          "product.name",
+          "product.images",
+          "product.origin",
+          "product.material",
+          "product.size",
+          "product.warranty",
+          "product.createdAt",
+          "product.updatedAt",
+          "inventory.quantity",
+          "category.name",
+          // "productReviews",
+          // "discount",
+        ])
+        .where({
+          id: productId,
+        })
+        .getOne();
+
+      // console.log(foundProduct);
+      return foundProduct || null; // Return null if the product is not found
     } catch (error) {
       console.error("Error while finding product by ID:", error);
       throw error; // You might want to handle this error more gracefully in a production environment

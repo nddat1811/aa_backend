@@ -6,7 +6,6 @@ import {
   CartItem,
   User,
   UserPayment,
-  Transaction,
   ProductReview,
   Product,
   ProductDiscount,
@@ -37,14 +36,13 @@ export class DatabaseSingleton {
           CartItem,
           User,
           UserPayment,
-          Transaction,
           ProductReview,
           ProductDiscount,
           ProductInventory,
           OrderDetail,
           OrderItem,
         ],
-        logging: true,
+        // logging: true,
         synchronize: false, // dòng bug qq má m
       };
 

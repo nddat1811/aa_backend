@@ -23,7 +23,7 @@ class CartItemService {
     return null;
   }
   private async createOrUpdateCartItem(
-    productId: string,
+    productId: number,
     userId: number,
     size: string,
     quantity: number,
@@ -50,7 +50,7 @@ class CartItemService {
         const quantityError = this.checkQuantityError(
           quantity,
           //@ts-ignore
-          product?.inventory
+          product?.inventory?.quantity
         );
 
         if (quantityError) {
@@ -101,7 +101,7 @@ class CartItemService {
           const quantityError = this.checkQuantityError(
             checkProductExist.quantity,
             //@ts-ignore
-            product?.inventory
+            product?.inventory?.quantity
           );
 
           if (quantityError) {
@@ -126,7 +126,7 @@ class CartItemService {
   }
 
   async addToCart(
-    productId: string,
+    productId: number,
     userId: number,
     size: string,
     quantity: number
@@ -141,7 +141,7 @@ class CartItemService {
   }
 
   async updateCartItem(
-    productId: string,
+    productId: number,
     userId: number,
     size: string,
     quantity: number
