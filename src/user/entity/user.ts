@@ -8,10 +8,8 @@ import {
 } from "typeorm";
 import {
   UserPayment,
-  Cart,
   ProductReview,
   Address,
-  Transaction,
   OrderDetail,
 } from "../../models/index";
 @Entity({name: "users"})
@@ -62,8 +60,8 @@ export class User {
   @OneToMany(() => ProductReview, (productReviews) => productReviews.user)
   productReviews?: ProductReview[];
 
-  @OneToMany(() => Transaction, (userTransactions) => userTransactions.user)
-  userTransactions?: Transaction[];
+  // @OneToMany(() => Transaction, (userTransactions) => userTransactions.user)
+  // userTransactions?: Transaction[];
 
   @OneToMany(() => OrderDetail, (userOders) => userOders.user)
   userOders?: OrderDetail[];

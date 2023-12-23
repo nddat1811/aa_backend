@@ -8,12 +8,18 @@ import {
   JoinColumn,
   OneToMany,
 } from "typeorm";
-import { Product, OrderDetail } from "./index";
+import { Product, OrderDetail } from "../../../models/index";
 
-@Entity({name: "order_items"})
+@Entity({ name: "order_items" })
 export class OrderItem {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column()
+  quantity!: number;
+
+  @Column("double")
+  price!: number;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
@@ -28,6 +34,10 @@ export class OrderItem {
   })
   product?: Product;
 
-  @OneToMany(() => OrderDetail, (orderDetails) => orderDetails.order)
-  orderDetails?: OrderDetail[];
+  @ManyToOne(() => OrderDetail, (order) => order.orderItems)
+  @JoinColumn({
+    name: "order_id",
+    referencedColumnName: "id",
+  })
+  order?: OrderDetail;
 }

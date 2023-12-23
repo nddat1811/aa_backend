@@ -1,14 +1,13 @@
 import { Address } from "../address/entity/address";
 import { Cart } from "../cart/entity/cart";
 import { CartItem } from "../cart/cart_item/entity/cart_item";
-import { OrderItem } from "./oder_item";
-import { OrderDetail } from "./order_detail";
+import { OrderItem } from "../order/order_item/entity/oder_item";
+import { OrderDetail } from "../order/entity/order_detail";
 import { ProductCategory } from "../product_category/entity/product_category";
 import { ProductDiscount } from "./product_discount";
-import { ProductInventory } from "./product_inventory";
+import { ProductInventory } from "../inventory/entity/product_inventory";
 import { ProductReview } from "./product_review";
 import { Product } from "../product/entity/product";
-import { Transaction } from "./transaction";
 import { UserPayment } from "./user_payment";
 import { User } from "../user/entity/user";
 
@@ -19,7 +18,6 @@ export {
   CartItem,
   User,
   UserPayment,
-  Transaction,
   ProductReview,
   Product,
   ProductDiscount,

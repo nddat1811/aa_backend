@@ -18,8 +18,11 @@ export class Address {
   @Column()
   city?: string;
 
-  @Column({ name: "postal_code" })
-  postalCode?: string;
+  @Column()
+  phone?: string;
+
+  @Column()
+  name?: string;
 
   @Column({ name: "is_default" })
   isDefault?: boolean;

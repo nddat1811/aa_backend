@@ -83,10 +83,14 @@ const getListAddress = async (
  *                 type: string
  *                 description: The city name.
  *                 default: Hồ CHí Minh
- *               postalCode:
+ *               phone:
  *                 type: string
- *                 description: The postalCode.
- *                 default: 10000
+ *                 description: The phone.
+ *                 default: 0975175333
+ *               name:
+ *                 type: string
+ *                 description: The name.
+ *                 default: Đạt
  *               isDefault:
  *                 type: boolean
  *                 description: The city name.
@@ -155,7 +159,7 @@ const createNewAddress = async (
  *         application/json:
  *           schema:
  *             type: object
- *             properties:
+  *             properties:
  *               street:
  *                 type: string
  *                 description: The street name.
@@ -164,10 +168,14 @@ const createNewAddress = async (
  *                 type: string
  *                 description: The city name.
  *                 default: Hồ CHí Minh
- *               postalCode:
+ *               phone:
  *                 type: string
- *                 description: The postalCode.
- *                 default: 10000
+ *                 description: The phone.
+ *                 default: 0975175333
+ *               name:
+ *                 type: string
+ *                 description: The name.
+ *                 default: Đạt
  *               isDefault:
  *                 type: boolean
  *                 description: The city name.
@@ -217,7 +225,7 @@ const updateAddress = async (
  *   put:
  *     summary: set default address
  *     parameters:
- *       - in: path 
+ *       - in: path
  *         name: userID
  *         required: true
  *         description: ID of the user's address
@@ -240,7 +248,7 @@ const updateAddress = async (
  *             properties:
  *               isDefault:
  *                 type: boolean
- *                 description: The city name.
+ *                 description: Set default.
  *                 default: false
  *     responses:
  *       '201':
