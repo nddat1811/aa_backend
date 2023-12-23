@@ -1,14 +1,14 @@
 
 import express from "express";
 import { isAuthenticated } from "../middleware/authorized";
-import { creatNewOrder, getListOrder, getOrderDetailById } from "./order.controller";
+import { creatNewOrder, getListOrderUser, getOrderDetailById, updateOrder } from "./order.controller";
 
 const router = express.Router();
 
-router.get("/list", isAuthenticated, getListOrder );
+router.get("/list", isAuthenticated, getListOrderUser );
 router.post("/new", isAuthenticated, creatNewOrder);
 router.get("/detail/:id", isAuthenticated, getOrderDetailById );
-// router.put("/update_cart", isAuthenticated, updateCart);
+router.put("/update/:id", isAuthenticated, updateOrder);
 // router.delete("/delete", isAuthenticated, deleteItemInCart);
 
 export default router;

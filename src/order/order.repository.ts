@@ -31,7 +31,7 @@ class OrderDetailRepository {
       throw error;
     }
   }
-  async getListOrder(
+  async getListOrderUser(
     userId: number,
     transactionalEntityManager: EntityManager
   ): Promise<Array<OrderDetail> | null> {
@@ -52,7 +52,7 @@ class OrderDetailRepository {
           "user.role",
           "user.avatar",
           "orderItems",
-          "address"
+          "address",
         ])
         .getMany();
 
@@ -64,7 +64,6 @@ class OrderDetailRepository {
   }
 
   async getOrderDetailById(
-    userId: number,
     orderId: number,
     transactionalEntityManager: EntityManager
   ): Promise<OrderDetail | null> {
@@ -78,7 +77,6 @@ class OrderDetailRepository {
         .leftJoin("orderDetail.address", "address")
         .leftJoin("orderDetail.orderItems", "orderItems")
         .where("orderDetail.id = :orderId", { orderId })
-        .andWhere("user.id = :userId", { userId })
         .select([
           "orderDetail",
           "user.name",
@@ -86,11 +84,33 @@ class OrderDetailRepository {
           "user.role",
           "user.avatar",
           "orderItems",
-          "address"
+          "address",
         ])
         .getOne();
 
       return orderDetail;
+    } catch (error) {
+      console.error("Error updating last login", error);
+      throw error;
+    }
+  }
+
+  async updateOrderStatus(
+    transactionalEntityManager: EntityManager,
+    orderDetail: OrderDetail,
+    status: string
+  ): Promise<OrderDetail | null> {
+    const orderDetailRepository =
+      transactionalEntityManager.getRepository(OrderDetail);
+
+    try {
+      // Update the order status
+      orderDetail.status = status;
+      const updatedOrder = await orderDetailRepository.save(
+        orderDetail
+      );
+
+      return updatedOrder;
     } catch (error) {
       console.error("Error updating last login", error);
       throw error;
