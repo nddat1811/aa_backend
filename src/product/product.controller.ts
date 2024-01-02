@@ -143,19 +143,15 @@ const createNewProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const createProductDto: CreateProductDto = req.body;
 
-    const [createdProduct, err] = await productService.createProduct(
+    const [createdProduct, code, err] = await productService.createProduct(
       createProductDto
     );
 
     if (err) {
-      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, createdProduct));
+      res.send(returnResponse(code, err.message, createdProduct));
     } else {
       res.send(
-        returnResponse(
-          CODE_CREATED_SUCCESS,
-          "Product created successfully",
-          createdProduct
-        )
+        returnResponse(code, "Product created successfully", createdProduct)
       );
     }
   } catch (error) {
@@ -209,7 +205,7 @@ const createNewProduct = async (req: Request, res: Response): Promise<void> => {
 const findProductById = async (req: Request, res: Response): Promise<void> => {
   try {
     const productId: string = req.params.id; // Assuming the ID is a string, adjust accordingly
-
+    //request role to check detail deleted product
     const foundProduct = await productService.findProductById(+productId);
 
     if (!foundProduct) {
@@ -398,17 +394,17 @@ const updateProduct = async (req: Request, res: Response): Promise<void> => {
     const productId: string = req.params.id;
     const updateProductDto: CreateProductDto = req.body;
 
-    const [updatedProduct, err] = await productService.updateProduct(
-      productId,
+    const [updatedProduct, code, err] = await productService.updateProduct(
+      +productId,
       updateProductDto
     );
 
     if (err) {
-      res.send(returnResponse(ERROR_BAD_REQUEST, err.message, updatedProduct));
+      res.send(returnResponse(code, err.message, updatedProduct));
     } else {
       res.send(
         returnResponse(
-          CODE_SUCCESS,
+          code,
           "Product updated successfully",
           updatedProduct
         )
