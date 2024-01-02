@@ -33,7 +33,6 @@ class OrderDetailService {
     createOrder: CreateOrderDto
   ): Promise<[OrderDetail | null, number, string]> {
     return getConnection().transaction(async (transactionalEntityManager) => {
-      let errorOccurred = false;
 
       try {
         const createdNewOrderDetail =
@@ -48,58 +47,52 @@ class OrderDetailService {
         }
 
         const orderItemPromises = createOrder.items.map(async (item) => {
-          if (!errorOccurred) {
-            const newOrderItem = await orderItemRepository.createNewOderItem(
-              item.quantity,
-              item.price,
-              item.product_id,
-              createdNewOrderDetail.id,
-              transactionalEntityManager
-            );
+          const newOrderItem = await orderItemRepository.createNewOderItem(
+            item.quantity,
+            item.price,
+            item.product_id,
+            createdNewOrderDetail.id,
+            transactionalEntityManager
+          );
 
-            if (!newOrderItem) {
-              errorOccurred = true;
-              transactionalEntityManager.query("ROLLBACK");
-              console.log(`Can't create new order item ${item.product_id}`);
-            }
+          if (!newOrderItem) {
+            transactionalEntityManager.query("ROLLBACK");
+            return [
+              null,
+              ERROR_BAD_REQUEST,
+              `Can't create new order item ${item.product_id}`,
+            ];
+          }
+          // Assuming cartItemRepository has a method to delete a cart item
+          const del = await cartItemRepository.deleteCartItem(
+            item.product_id,
+            userId
+          );
+          if (!del) {
+            transactionalEntityManager.query("ROLLBACK");
+            return [
+              null,
+              ERROR_BAD_REQUEST,
+              `Can't delete item ${item.product_id} in cart`,
+            ];
+          }
 
-            // Assuming cartItemRepository has a method to delete a cart item
-            const del = await cartItemRepository.deleteCartItem(
-              item.product_id,
-              userId
-            );
-            if (!del) {
-              transactionalEntityManager.query("ROLLBACK");
-              errorOccurred = true;
-              console.log(`Can't delete item ${item.product_id} in cart`);
-            }
-
-            const editQuantity = await productInventoryRepository.editInventory(
-              item.product_id,
-              item.quantity,
-              transactionalEntityManager
-            );
-            if (!editQuantity) {
-              transactionalEntityManager.query("ROLLBACK");
-              errorOccurred = true;
-              console.log(
-                `Can't edit quantity item ${item.product_id} in cart`
-              );
-            }
+          const editQuantity = await productInventoryRepository.editInventory(
+            item.product_id,
+            item.quantity,
+            transactionalEntityManager
+          );
+          if (!editQuantity) {
+            transactionalEntityManager.query("ROLLBACK");
+            return [
+              null,
+              ERROR_BAD_REQUEST,
+              `Can't edit quantity item ${item.product_id} in cart`,
+            ];
           }
         });
 
-        // Wait for all promises inside the loop to resolve
         await Promise.all(orderItemPromises);
-
-        if (errorOccurred) {
-          await transactionalEntityManager.query("ROLLBACK");
-          return [
-            null,
-            ERROR_BAD_REQUEST,
-            "Error occurred during order creation",
-          ];
-        }
 
         return [
           createdNewOrderDetail,

@@ -1,12 +1,12 @@
 import { CartItem } from "../../models";
 import { cartItemRepository } from "./cart_item.repository";
 import { cartRepository } from "../cart.repository";
-import { productService } from "../../product/product.service";
 import {
   CODE_SUCCESS,
   ERROR_BAD_REQUEST,
   ERROR_UNAUTHORIZED,
 } from "../../helper/constant";
+import { productRepository } from "../../product/product.repository";
 
 class CartItemService {
   private checkQuantityError(
@@ -30,7 +30,7 @@ class CartItemService {
     updateOnly: boolean
   ): Promise<[CartItem | null, number, string]> {
     try {
-      const product = await productService.findProductById(productId);
+      const product = await productRepository.findProductById(productId);
       const checkCartExist = await cartRepository.checkCartExist(userId);
 
       if (!checkCartExist) {
